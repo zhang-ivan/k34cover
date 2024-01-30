@@ -118,13 +118,16 @@ def truncate(blocks, r1):  # truncate a group from T[s,1;r] to resize it to r1<=
     r = int(math.sqrt(len(blocks)))
     s = len(blocks[0])
     t = r - r1
-    # del_elements = list(range(r * s - t + 1, r * s + 1))
-    for block in blocks:
-        new_block = tuple(e for e in block if e <= r * s - t)
-        new_blocks.append(new_block)
-    blocks = new_blocks
-    # print(blocks)
-    return blocks
+    if t == 0:
+        return blocks
+    else:
+        # del_elements = list(range(r * s - t + 1, r * s + 1))
+        for block in blocks:
+            new_block = tuple(e for e in block if e <= r * s - t)
+            new_blocks.append(new_block)
+        blocks = new_blocks
+        # print(blocks)
+        return blocks
 
 
 if __name__ == '__main__':
