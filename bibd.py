@@ -295,8 +295,8 @@ def bibd4(v):  # generate BIBD(v,4,1) by Lem 5.11
             blocks.append(tuple(sorted(block_tmp)))
 
     blocks = sorted(blocks)
-    print('BIBD:')
-    print(blocks)
+    # print('BIBD:')
+    # print(blocks)
     return blocks
 
 
