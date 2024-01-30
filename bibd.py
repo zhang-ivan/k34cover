@@ -39,11 +39,16 @@ def bibd4_m4(m, blocks=None):  # generate BIBD(3m+1,4,1) by Table 5.3
         for i in range(2):
             for j in range(25):
                 if j == 0:
-                    tuple_tmp = (1, int(z ** (2 * i)) + 1, int(z ** (2 * i + 8)) + 1, int(z ** (2 * i + 16)) + 1)
+                    tuple_tmp = (1,
+                                 int(z ** (2 * i)) + 1,
+                                 int(z ** (2 * i + 8)) + 1,
+                                 int(z ** (2 * i + 16)) + 1)
                     blocks_tmp.append(tuple(sorted(tuple_tmp)))
                 else:
-                    tuple_tmp = (int(z ** (j - 1)) + 1, int(z ** (2 * i) + z ** (j - 1)) + 1,
-                                 int(z ** (2 * i + 8) + z ** (j - 1)) + 1, int(z ** (2 * i + 16) + z ** (j - 1)) + 1)
+                    tuple_tmp = (int(z ** (j - 1)) + 1,
+                                 int(z ** (2 * i) + z ** (j - 1)) + 1,
+                                 int(z ** (2 * i + 8) + z ** (j - 1)) + 1,
+                                 int(z ** (2 * i + 16) + z ** (j - 1)) + 1)
                     blocks_tmp.append(tuple(sorted(tuple_tmp)))
         blocks = sorted(blocks_tmp)
     elif m == 9:
@@ -95,11 +100,16 @@ def bibd4_m4(m, blocks=None):  # generate BIBD(3m+1,4,1) by Table 5.3
         for i in range(3):
             for j in range(37):
                 if j == 0:
-                    tuple_tmp = (1, int(a ** (12 * i)) + 1, int(a ** (12 * i + 11)) + 1, int(a ** (12 * i + 14)) + 1)
+                    tuple_tmp = (1,
+                                 int(a ** (12 * i)) + 1,
+                                 int(a ** (12 * i + 11)) + 1,
+                                 int(a ** (12 * i + 14)) + 1)
                     blocks_tmp.append(tuple(sorted(tuple_tmp)))
                 else:
-                    tuple_tmp = (j + 1, int(a ** (12 * i) + a ** (j - 1)) + 1,
-                                 int(a ** (12 * i + 11) + a ** (j - 1)) + 1, int(a ** (12 * i + 14) + a ** (j - 1)) + 1)
+                    tuple_tmp = (int(a ** (j - 1)) + 1,
+                                 int(a ** (12 * i) + a ** (j - 1)) + 1,
+                                 int(a ** (12 * i + 11) + a ** (j - 1)) + 1,
+                                 int(a ** (12 * i + 14) + a ** (j - 1)) + 1)
                     blocks_tmp.append(tuple(sorted(tuple_tmp)))
         blocks = sorted(blocks_tmp)
     elif m == 13:
@@ -117,6 +127,22 @@ def bibd4_m4(m, blocks=None):  # generate BIBD(3m+1,4,1) by Table 5.3
         blocks.extend([(1, 2, 3, 40), (4, 5, 6, 40), (7, 8, 9, 40), (10, 11, 12, 40), (13, 14, 15, 40),
                        (16, 17, 18, 40), (19, 20, 21, 40), (22, 23, 24, 40), (25, 26, 27, 40), (28, 29, 30, 40),
                        (31, 32, 33, 40), (34, 35, 36, 40), (37, 38, 39, 40)])
+        blocks = sorted(blocks)
+    elif m == 28:
+        gdd4_3_84 = []
+        bibd4_28 = bibd4_m4(9)
+        for master_block in bibd4_28:
+            indices = []
+            for el in master_block:
+                indices.extend([3 * (el - 1) + 1, 3 * (el - 1) + 2, 3 * el])
+            for block in gdd4_3_4:
+                block_tmp = []
+                for e in block:
+                    block_tmp.append(indices[e - 1])
+                gdd4_3_84.append(tuple(sorted(block_tmp)))
+        blocks = gdd4_3_84
+        for i in range(28):
+            blocks.append((i*3+1, i*3+2, i*3+3, 85))
         blocks = sorted(blocks)
 
     # print(blocks)
@@ -201,6 +227,7 @@ def u45(u, design=None, groups=None):  # Intermediate design {4,5}-GDD of order 
             groups.append(tuple(range(17, u + 1)))
     elif u in [21, 24, 25]:
         design = transversal.truncate(transversal.trans_trim(transversal.trans1(5, 1), 5), u - 20)
+        # print(design)
         groups.extend([(1, 2, 3, 4, 5), (6, 7, 8, 9, 10), (11, 12, 13, 14, 15), (16, 17, 18, 19, 20)])
         groups.append(tuple(range(21, u + 1)))
     elif u in [32, 33, 36, 37, 40]:
@@ -266,6 +293,7 @@ def bibd4(v):  # generate BIBD(v,4,1) by Lem 5.11
     assert v % 12 in [1, 4], f'input {v} is not congruent to 1 or 4 (mod 12)!'
     u = (v - 1) / 3
     u_design, u_groups = u45(u)
+    # print(u_design)
     blocks = []
     for master_block in u_design:
         indices = []
@@ -285,6 +313,7 @@ def bibd4(v):  # generate BIBD(v,4,1) by Lem 5.11
                 blocks.append(tuple(sorted(block_tmp)))
     for group in u_groups:
         m = len(group)
+        # print(m)
         indices = []
         for el in group:
             indices.extend([el, el + u, el + 2 * u])
@@ -301,4 +330,9 @@ def bibd4(v):  # generate BIBD(v,4,1) by Lem 5.11
 
 
 if __name__ == '__main__':
-    bibd4(148)
+    # blocks = bibd4(64)
+    # print(blocks)
+    d = bibd4_m4(8)
+    print(d)
+    # result = bibd4(37)
+    # print(result)

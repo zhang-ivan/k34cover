@@ -21,6 +21,7 @@ def cover_k3k4(v, cover=None, xi=None):  # generate minimum K3 and K4 cover of K
         groups = []
         if v % 12 in [0, 3]:
             design = bibd.bibd4(v + 1)
+            # print(design)
             for old_tuple in design:
                 new_tuple = [x for x in old_tuple if x != v + 1]
                 if len(new_tuple) == 3:
@@ -28,17 +29,21 @@ def cover_k3k4(v, cover=None, xi=None):  # generate minimum K3 and K4 cover of K
                 else:
                     cover.append(tuple(sorted(new_tuple)))
             groups = sorted(groups)
+            # print(cover)
+            # print(groups)
             #  Just in case groups are not perfectly divided...
             indices = []
             for g in groups:
                 indices.extend(g)
+            # print(indices)
             groups = []
             for i in range(v//3):
                 groups.append((i*3+1, i*3+2, i*3+3))
 
             relabeled_cover = []
             for tuple_ in cover:
-                relabeled_tuple = tuple(sorted(indices.index(i)+1 for i in tuple_))
+                relabeled_tuple = tuple((indices.index(i_)+1 for i_ in tuple_))
+                # print(relabeled_tuple)
                 relabeled_cover.append(relabeled_tuple)
             cover = relabeled_cover
             cover.extend(groups)  # Finally fill in the triples...
@@ -64,11 +69,12 @@ def cover_k3k4(v, cover=None, xi=None):  # generate minimum K3 and K4 cover of K
             cover.extend(groups)
             cover = sorted(cover)
             xi = [(1, v - 1), (1, v)]
-
+    # print(cover)
+    # print(xi)
     return cover, xi
 
 
 if __name__ == '__main__':
-    c, x = cover_k3k4(74)
+    c, x = cover_k3k4(64)
     print(c)
     print(x)

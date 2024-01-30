@@ -4,10 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2bb63d6f-5a64-4f4e-8152-0fde0ff159d8" name="Changes" comment="BIBD(v,4,1) generator">
-      <change afterPath="$PROJECT_DIR$/k3k4cover.py" afterDir="false" />
+    <list default="true" id="2bb63d6f-5a64-4f4e-8152-0fde0ff159d8" name="Changes" comment="Generator for minimum covering by K3 and K4 with minimum excess.&#10;Coded for order congruent to 1, 4, 0, 3, 2, 11 (mod 12).">
+      <change afterPath="$PROJECT_DIR$/check_cover.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/k3k4cover.xlsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bibd.py" beforeDir="false" afterPath="$PROJECT_DIR$/bibd.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/k3k4cover.py" beforeDir="false" afterPath="$PROJECT_DIR$/k3k4cover.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pg2.py" beforeDir="false" afterPath="$PROJECT_DIR$/pg2.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transversal.py" beforeDir="false" afterPath="$PROJECT_DIR$/transversal.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,6 +57,7 @@
   "keyToString": {
     "ASKED_ADD_EXTERNAL_FILES": "true",
     "Python.bibd.executor": "Run",
+    "Python.check_cover.executor": "Run",
     "Python.k3k4cover.executor": "Run",
     "Python.main.executor": "Run",
     "Python.pg2.executor": "Run",
@@ -61,10 +66,11 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "C:/Users/Ivan/OneDrive - VSB-TUO/dancing_links"
+    "last_opened_file_path": "C:/Users/Ivan/OneDrive - VSB-TUO/dancing_links",
+    "settings.editor.selected.configurable": "Console"
   }
 }]]></component>
-  <component name="RunManager" selected="Python.k3k4cover">
+  <component name="RunManager" selected="Python.check_cover">
     <configuration name="bibd" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="cover_generator" />
       <option name="ENV_FILES" value="" />
@@ -79,6 +85,28 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/bibd.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="check_cover" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="cover_generator" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/check_cover.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -153,28 +181,6 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="transversal (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="cover_generator" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/transversal.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
     <configuration name="transversal" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="cover_generator" />
       <option name="ENV_FILES" value="" />
@@ -199,11 +205,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.k3k4cover" />
+        <item itemvalue="Python.check_cover" />
         <item itemvalue="Python.bibd" />
         <item itemvalue="Python.pg2" />
-        <item itemvalue="Python.transversal (1)" />
         <item itemvalue="Python.transversal" />
+        <item itemvalue="Python.k3k4cover" />
       </list>
     </recent_temporary>
   </component>
@@ -239,7 +245,31 @@
       <option name="project" value="LOCAL" />
       <updated>1706575221763</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="modification">
+      <option name="closed" value="true" />
+      <created>1706608224946</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1706608224946</updated>
+    </task>
+    <task id="LOCAL-00004" summary="modification">
+      <option name="closed" value="true" />
+      <created>1706608233632</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1706608233632</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Generator for minimum covering by K3 and K4 with minimum excess.&#10;Coded for order congruent to 1, 4, 0, 3, 2, 11 (mod 12).">
+      <option name="closed" value="true" />
+      <created>1706608297437</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1706608297437</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -247,7 +277,9 @@
     <MESSAGE value="First upload" />
     <MESSAGE value="Initialisation." />
     <MESSAGE value="BIBD(v,4,1) generator" />
-    <option name="LAST_COMMIT_MESSAGE" value="BIBD(v,4,1) generator" />
+    <MESSAGE value="modification" />
+    <MESSAGE value="Generator for minimum covering by K3 and K4 with minimum excess.&#10;Coded for order congruent to 1, 4, 0, 3, 2, 11 (mod 12)." />
+    <option name="LAST_COMMIT_MESSAGE" value="Generator for minimum covering by K3 and K4 with minimum excess.&#10;Coded for order congruent to 1, 4, 0, 3, 2, 11 (mod 12)." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -259,12 +291,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/pg2.py</url>
-          <line>37</line>
+          <line>40</line>
           <option name="timeStamp" value="6" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/pg2.py</url>
-          <line>40</line>
+          <line>43</line>
           <option name="timeStamp" value="7" />
         </line-breakpoint>
       </breakpoints>

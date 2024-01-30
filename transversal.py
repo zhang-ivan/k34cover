@@ -13,6 +13,7 @@ def trans1(p, alpha, blocks=None, groups=None):  # generate T[q+1,1;q] for q=p**
     elm_to_del = q * q + q + 1
     if blocks is None:
         blocks = pg2(p, alpha)
+        # print(blocks)
     for block in blocks:
         tuple_tmp = copy.deepcopy(block)
         if elm_to_del in tuple_tmp:
@@ -26,22 +27,24 @@ def trans1(p, alpha, blocks=None, groups=None):  # generate T[q+1,1;q] for q=p**
 
     indices = []
     for group in groups:
-        for x in group:
-            indices.append(x)
+        indices.extend(group)
+    # print(indices)
     groups_new = []
     for i in range(q + 1):
         groups_new.append(tuple(range(i * q + 1, (i + 1) * q + 1)))
     groups = groups_new
-    dict_tmp = {}
-    for i in range(1, q * q + q + 1):
-        dict_tmp[i] = indices[i - 1]
+    # print(groups)
+    # dict_tmp = {}
+    # for i in range(1, q * q + q + 1):
+    #     dict_tmp[i] = indices[i - 1]
 
     blocks_new = []
     for block in blocks:
         block_tmp = []
         for x in block:
-            block_tmp.append(dict_tmp[x])
+            block_tmp.append(indices.index(x)+1)
         blocks_new.append(tuple(sorted(block_tmp)))
+    # print(blocks_new)
     blocks = sorted(blocks_new)
     # print(blocks)
     # print(groups)
@@ -131,7 +134,8 @@ def truncate(blocks, r1):  # truncate a group from T[s,1;r] to resize it to r1<=
 
 
 if __name__ == '__main__':
-    # trans1(3, 2)
+    b = trans1(5, 1)
+    print(b)
     # trans_mult(trans1(2, 1), trans1(2, 1))
 
-    truncate(trans2(20), 10)
+    # truncate(trans2(20), 10)
