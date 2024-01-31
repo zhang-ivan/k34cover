@@ -144,6 +144,9 @@ def bibd4_m4(m, blocks=None):  # generate BIBD(3m+1,4,1) by Table 5.3
         for i in range(28):
             blocks.append((i*3+1, i*3+2, i*3+3, 85))
         blocks = sorted(blocks)
+    elif m == 29:
+        blocks = []
+        print('Design for 29 is still missing!')
 
     # print(blocks)
     return blocks
