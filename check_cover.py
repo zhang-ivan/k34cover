@@ -3,6 +3,7 @@ import sys
 import numpy
 import k3k4cover
 
+
 numpy.set_printoptions(threshold=sys.maxsize)
 
 
@@ -54,15 +55,64 @@ def k3k4cover_checker(v, design_):  # Check whether a design is the minimum cove
     print(check)
 
 
+def sort_lost_of_tuples(original_cover):
+    cover_tmp_1 = []
+    for tuple_1 in original_cover:
+        tuple_tmp_1 = tuple(sorted(tuple_1))
+        cover_tmp_1.append(tuple_tmp_1)
+    cover = sorted(cover_tmp_1, key=lambda x_: (len(x_), x_))
+    return cover
+
+
+def count_k3_k4(cover):  # Input a sorted cover!
+    l = len(cover)
+    i = 0
+    while len(cover[i]) == 3:
+        i += 1
+    alpha = i
+    beta = l - alpha
+    return alpha, beta
+
+
+def assign_diagonal(cover, order_):  # Input a sorted cover!
+    assigned_dict = {}
+    l_ = len(cover)
+    occurrence_ = []
+    for i in range(1, order_ + 1):
+        occurrence_.append([i])
+        for j in range(l_):
+            if i in cover[j]:
+                occurrence_[i-1].append(cover[j])
+    while len(occurrence_) > 0:
+        occurrence_ = sorted(occurrence_, key=lambda x: len(x))
+        i_ = occurrence_[0][0]
+        assigned_dict[i_] = occurrence_[0][1]
+        for row in occurrence_:
+            try:
+                row.remove(assigned_dict[i_])
+            except ValueError:
+                pass
+        del occurrence_[0]
+    assigned_dict = dict(sorted(assigned_dict.items()))
+    return assigned_dict
+
+
 if __name__ == '__main__':
-    for order in range(7, 89):
-        if order % 12 in [0,1,2,3,4,11]:
+    for order in range(7, 301):
+        if order % 12 in [0, 1, 2, 3, 4, 11]:
             print('------------')
             print(f'order = {order}')
-            design, xi = k3k4cover.cover_k3k4(order)
+            design_, xi = k3k4cover.cover_k3k4(order)
+            design = sort_lost_of_tuples(design_)
             print(f'design for K-{order}:')
             print(design)
             print(f'excess for K-{order}:')
             print(xi)
+            count_k3, count_k4 = count_k3_k4(design)
+            print(f'number of triples: {count_k3}')
+            print(f'number of quadruples: {count_k4}')
+            print('Assigning diagonal:')
+            dict_diagonal = assign_diagonal(design, order)
+            print(dict_diagonal)
             print(f'check result for K-{order}:')
             k3k4cover_checker(order, design)
