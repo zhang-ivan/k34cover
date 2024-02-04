@@ -37,12 +37,12 @@ def cover_k3k4(v, cover=None, xi=None):  # generate minimum K3 and K4 cover of K
                 indices.extend(g)
             # print(indices)
             groups = []
-            for i in range(v//3):
-                groups.append((i*3+1, i*3+2, i*3+3))
+            for i in range(v // 3):
+                groups.append((i * 3 + 1, i * 3 + 2, i * 3 + 3))
 
             relabeled_cover = []
             for tuple_ in cover:
-                relabeled_tuple = tuple((indices.index(i_)+1 for i_ in tuple_))
+                relabeled_tuple = tuple((indices.index(i_) + 1 for i_ in tuple_))
                 # print(relabeled_tuple)
                 relabeled_cover.append(relabeled_tuple)
             cover = relabeled_cover
@@ -71,10 +71,15 @@ def cover_k3k4(v, cover=None, xi=None):  # generate minimum K3 and K4 cover of K
             xi = [(1, v - 1), (1, v)]
     # print(cover)
     # print(xi)
+
     return cover, xi
+
+
+
 
 
 if __name__ == '__main__':
     c, x = cover_k3k4(64)
+
     print(c)
     print(x)

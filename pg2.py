@@ -49,5 +49,5 @@ def pg2(p, alpha, blocks=None):  # generate PG(2, p**alpha) by Thm 2.1
 
 
 if __name__ == '__main__':
-    result = pg2(5,1)
-    # print(result)
+    result = pg2(2, 2)
+    print(result)
