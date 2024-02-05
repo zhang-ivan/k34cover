@@ -4,14 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2bb63d6f-5a64-4f4e-8152-0fde0ff159d8" name="Changes" comment="Misc.">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bibd.py" beforeDir="false" afterPath="$PROJECT_DIR$/bibd.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/check_cover.py" beforeDir="false" afterPath="$PROJECT_DIR$/check_cover.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/k3k4cover.py" beforeDir="false" afterPath="$PROJECT_DIR$/k3k4cover.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pg2.py" beforeDir="false" afterPath="$PROJECT_DIR$/pg2.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transversal.py" beforeDir="false" afterPath="$PROJECT_DIR$/transversal.py" afterDir="false" />
-    </list>
+    <list default="true" id="2bb63d6f-5a64-4f4e-8152-0fde0ff159d8" name="Changes" comment="Result obtained for 7&lt;=v&lt;=300 and v congruent to 0, 1, 2, 3, 4, 11 (mod 12)." />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -69,7 +62,7 @@
     &quot;settings.editor.selected.configurable&quot;: &quot;Console&quot;
   }
 }</component>
-  <component name="RunManager" selected="Python.check_cover">
+  <component name="RunManager" selected="Python.bibd">
     <configuration name="bibd" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="cover_generator" />
       <option name="ENV_FILES" value="" />
@@ -204,8 +197,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.check_cover" />
         <item itemvalue="Python.bibd" />
+        <item itemvalue="Python.check_cover" />
         <item itemvalue="Python.transversal" />
         <item itemvalue="Python.pg2" />
         <item itemvalue="Python.k3k4cover" />
@@ -300,7 +293,39 @@
       <option name="project" value="LOCAL" />
       <updated>1706709900951</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Misc.">
+      <option name="closed" value="true" />
+      <created>1707086808773</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1707086808773</updated>
+    </task>
+    <task id="LOCAL-00011" summary="Added: resolve transversal design">
+      <option name="closed" value="true" />
+      <created>1707086844824</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1707086844825</updated>
+    </task>
+    <task id="LOCAL-00012" summary="Added: BIBD(88, 4, 1)">
+      <option name="closed" value="true" />
+      <created>1707086974054</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1707086974054</updated>
+    </task>
+    <task id="LOCAL-00013" summary="Result obtained for 7&lt;=v&lt;=300 and v congruent to 0, 1, 2, 3, 4, 11 (mod 12).">
+      <option name="closed" value="true" />
+      <created>1707087037167</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1707087037167</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -314,7 +339,10 @@
     <MESSAGE value="Correctness checker for the cover generated." />
     <MESSAGE value="Design for 29 is still missing." />
     <MESSAGE value="Misc." />
-    <option name="LAST_COMMIT_MESSAGE" value="Misc." />
+    <MESSAGE value="Added: resolve transversal design" />
+    <MESSAGE value="Added: BIBD(88, 4, 1)" />
+    <MESSAGE value="Result obtained for 7&lt;=v&lt;=300 and v congruent to 0, 1, 2, 3, 4, 11 (mod 12)." />
+    <option name="LAST_COMMIT_MESSAGE" value="Result obtained for 7&lt;=v&lt;=300 and v congruent to 0, 1, 2, 3, 4, 11 (mod 12)." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -323,76 +351,6 @@
           <url>file://$PROJECT_DIR$/main.py</url>
           <line>9</line>
           <option name="timeStamp" value="1" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/bibd.py</url>
-          <line>334</line>
-          <option name="timeStamp" value="10" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/bibd.py</url>
-          <line>335</line>
-          <option name="timeStamp" value="11" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/bibd.py</url>
-          <line>336</line>
-          <option name="timeStamp" value="12" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/bibd.py</url>
-          <line>337</line>
-          <option name="timeStamp" value="13" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/bibd.py</url>
-          <line>338</line>
-          <option name="timeStamp" value="14" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/bibd.py</url>
-          <line>340</line>
-          <option name="timeStamp" value="15" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/bibd.py</url>
-          <line>341</line>
-          <option name="timeStamp" value="16" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/bibd.py</url>
-          <line>342</line>
-          <option name="timeStamp" value="17" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/bibd.py</url>
-          <line>343</line>
-          <option name="timeStamp" value="18" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/bibd.py</url>
-          <line>345</line>
-          <option name="timeStamp" value="19" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/bibd.py</url>
-          <line>344</line>
-          <option name="timeStamp" value="20" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/bibd.py</url>
-          <line>346</line>
-          <option name="timeStamp" value="21" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/bibd.py</url>
-          <line>347</line>
-          <option name="timeStamp" value="22" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/bibd.py</url>
-          <line>348</line>
-          <option name="timeStamp" value="23" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

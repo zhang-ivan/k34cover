@@ -3,14 +3,14 @@ import sys
 import numpy
 import k3k4cover
 
-
 numpy.set_printoptions(threshold=sys.maxsize)
 
 
-def k3k4cover_checker(v, design_):  # Check whether a design is the minimum cover of Kv by K3 and K4 with minimum excess
+def k3k4cover_checker(v, input_design_):
+    # Check whether a design is the minimum cover of Kv by K3 and K4 with minimum excess
     adjacency = numpy.zeros((v, v))
 
-    for tuple_ in design_:
+    for tuple_ in input_design_:
         block = list(tuple_)
         if len(block) == 3:
             i = block[0]
@@ -26,19 +26,19 @@ def k3k4cover_checker(v, design_):  # Check whether a design is the minimum cove
             i = block[0]
             j = block[1]
             k = block[2]
-            l = block[3]
+            l_ = block[3]
             adjacency[i - 1][j - 1] += 1
             adjacency[j - 1][i - 1] += 1
             adjacency[i - 1][k - 1] += 1
             adjacency[k - 1][i - 1] += 1
             adjacency[j - 1][k - 1] += 1
             adjacency[k - 1][j - 1] += 1
-            adjacency[i - 1][l - 1] += 1
-            adjacency[l - 1][i - 1] += 1
-            adjacency[j - 1][l - 1] += 1
-            adjacency[l - 1][j - 1] += 1
-            adjacency[k - 1][l - 1] += 1
-            adjacency[l - 1][k - 1] += 1
+            adjacency[i - 1][l_ - 1] += 1
+            adjacency[l_ - 1][i - 1] += 1
+            adjacency[j - 1][l_ - 1] += 1
+            adjacency[l_ - 1][j - 1] += 1
+            adjacency[k - 1][l_ - 1] += 1
+            adjacency[l_ - 1][k - 1] += 1
         else:
             print("ERROR: WRONG BLOCK SIZE!")
     theoretical = numpy.ones((v, v))
@@ -49,7 +49,7 @@ def k3k4cover_checker(v, design_):  # Check whether a design is the minimum cove
         theoretical[0][v - 1] = 2
         theoretical[v - 2][0] = 2
         theoretical[v - 1][0] = 2
-    difference = adjacency - theoretical
+    # difference = adjacency - theoretical
     # print(difference)
     check = numpy.array_equal(adjacency, theoretical)
     print(check)
@@ -65,12 +65,12 @@ def sort_lost_of_tuples(original_cover):
 
 
 def count_k3_k4(cover):  # Input a sorted cover!
-    l = len(cover)
+    l_ = len(cover)
     i = 0
     while len(cover[i]) == 3:
         i += 1
     alpha = i
-    beta = l - alpha
+    beta = l_ - alpha
     return alpha, beta
 
 
@@ -82,7 +82,7 @@ def assign_diagonal(cover, order_):  # Input a sorted cover!
         occurrence_.append([i])
         for j in range(l_):
             if i in cover[j]:
-                occurrence_[i-1].append(cover[j])
+                occurrence_[i - 1].append(cover[j])
     while len(occurrence_) > 0:
         occurrence_ = sorted(occurrence_, key=lambda x: len(x))
         i_ = occurrence_[0][0]

@@ -8,7 +8,7 @@ def cover_k3k4(v, cover=None, xi=None):  # generate minimum K3 and K4 cover of K
         xi = []
     assert v > 6, f'Input {v} less than 7!'
     if v % 3 == 1:
-        excess = 0
+        # excess = 0
         if v % 12 in [1, 4]:
             cover = bibd.bibd4(v)
         else:
@@ -16,14 +16,14 @@ def cover_k3k4(v, cover=None, xi=None):  # generate minimum K3 and K4 cover of K
         # return cover
 
     elif v % 3 == 0:
-        excess = 0
+        # excess = 0
         cover = []
         groups = []
         if v % 12 in [0, 3]:
             design = bibd.bibd4(v + 1)
             # print(design)
             for old_tuple in design:
-                new_tuple = [x for x in old_tuple if x != v + 1]
+                new_tuple = [x_ for x_ in old_tuple if x_ != v + 1]
                 if len(new_tuple) == 3:
                     groups.append(tuple(sorted(new_tuple)))
                 else:
@@ -51,7 +51,7 @@ def cover_k3k4(v, cover=None, xi=None):  # generate minimum K3 and K4 cover of K
             # return cover
 
     else:
-        excess = 2
+        # excess = 2
         if v % 12 in [2, 11]:
             cover_1, xi_1 = cover_k3k4(v + 1)
             groups = []
@@ -62,7 +62,7 @@ def cover_k3k4(v, cover=None, xi=None):  # generate minimum K3 and K4 cover of K
             blocks = []
             for b in cover_1:
                 if len(b) == 4:
-                    new_tuple = tuple(x for x in b if x != v + 1)
+                    new_tuple = tuple(x_ for x_ in b if x_ != v + 1)
                     blocks.append(new_tuple)
             cover = [(1, v - 1, v)]
             cover.extend(blocks)
@@ -73,9 +73,6 @@ def cover_k3k4(v, cover=None, xi=None):  # generate minimum K3 and K4 cover of K
     # print(xi)
 
     return cover, xi
-
-
-
 
 
 if __name__ == '__main__':
