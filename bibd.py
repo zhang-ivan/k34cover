@@ -2,12 +2,150 @@ import pg2
 import transversal
 import galois
 
+
+EXCEPT_R_MAP = {
+    52: 13, 53: 13, 56: 13, 57: 13, 60: 13, 61: 13, 64: 13, 65: 13,
+    68: 17, 69: 17, 72: 17, 73: 17,
+    76: 19, 77: 19,
+    101: 25, 104: 25, 105: 25, 108: 25, 109: 25,
+}
+
+def pick_r_hardwired(u: int, *, fallback_pick_r):
+    """Use table if present; otherwise defer to your existing pick_r(u)."""
+    r = EXCEPT_R_MAP.get(u)
+    if r is not None:
+        # sanity: r must be in the truncation window and valid
+        lo = (u + 4)//5      # ceil(u/5)
+        hi = u//4            # floor(u/4)
+        u1 = u - 4*r
+        assert lo <= r <= hi and 0 <= u1 <= r, f"Hardwired r={r} invalid for u={u}"
+        return r
+    return fallback_pick_r(u)
+
+
+def pick_r(u: int) -> int:
+    """
+    Choose r for Lemma 5.8 subject to:
+      - r is a multiple of 4 but not of 8 (v2(r) = 2),
+      - if 3 | r then 9 | r (skip r ≡ 3 or 6 mod 9),
+      - 4 <= r <= floor(u/4),
+      - maximize r,
+      - and ensure 0 <= u - 4r <= r (valid truncation).
+
+    Assumes u >= 52 and u ≡ 0 or 1 (mod 4).
+    """
+
+    # ---------------------------------------------------------------------
+    # Notes on existence of such an r:
+    #
+    # We require r in [ceil(u/5), floor(u/4)] satisfying:
+    #   • v2(r) = 2          (i.e. r ≡ 4 mod 8, a multiple of 4 but not 8)
+    #   • if 3 | r then 9 | r   (exclude v3(r) = 1)
+    #
+    # These conditions force r into the 7 residue classes mod 72:
+    #       r ≡ 4, 20, 28, 36, 44, 52, 68   (mod 72)
+    #
+    # For large u, the interval [ceil(u/5), floor(u/4)] is wide enough
+    # that it always hits one of these residues. In fact, every u ≥ 360
+    # with u ≡ 0 or 1 (mod 4) admits such an r.
+    #
+    # Below 360, the only u ≡ 0 or 1 (mod 4) that DO NOT admit such an r
+    # are the following finite exceptional set:
+    #
+    #   {52,53,56,57,60,61,64,65,68,69,72,73,76,77,
+    #    101,104,105,108,109,
+    #    141,
+    #    261,264,265,268,269}
+    #
+    # All other u ≥ 52 and u ≡ 0,1 (mod 4) do admit a valid r.
+    #
+    # The caller may special-case these exceptions if needed.
+    # ---------------------------------------------------------------------
+
+    assert u >= 52 and u % 4 in (0, 1), f"pick_r: u={u} must be 0/1 (mod 4)"
+    q = u // 4
+
+    # Start from largest multiple of 4 <= q, step down by 4.
+    r = (q // 4) * 4
+    while r >= 4:
+        # v2(r) = 2  <=> multiple of 4 but not of 8
+        if r % 4 == 0 and r % 8 != 0:
+            # 3-adic constraint: either not divisible by 3, or divisible by 9
+            if (r % 3 != 0) or (r % 9 == 0):
+                u1 = u - 4 * r
+                if 0 <= u1 <= r:
+                    return r
+        r -= 4
+
+    raise ValueError(f"u={u}: no r found meeting the 2-adic/3-adic constraints in [4, floor(u/4)]")
+
+
+
+from collections import defaultdict
+from typing import List, Tuple, Dict
+
+M4 = {1, 4, 5, 8, 9, 12, 13, 28, 29}
+
+def _recover_5_columns(blocks: List[Tuple[int, ...]]) -> List[Tuple[int, ...]]:
+    """
+    Given size-5 TD blocks (one point from each column), recover 5 columns
+    label-agnostically via co-occurrence graph. Returns 5 sorted tuples.
+    """
+    co = defaultdict(set)
+    pts = set()
+    for B in blocks:
+        pts.update(B)
+        for i in range(5):
+            for j in range(i+1, 5):
+                a, c = B[i], B[j]
+                co[a].add(c); co[c].add(a)
+
+    unassigned = set(pts)
+    cols = []
+    while unassigned:
+        x = min(unassigned)
+        col = {x}
+        cand = [y for y in unassigned if y != x and y not in co[x]]
+        for y in cand:
+            if all((y not in co[z] and z not in co[y]) for z in col):
+                col.add(y)
+        cols.append(tuple(sorted(col)))
+        unassigned -= col
+    return cols
+
+def _proper_truncate_to_45(td5_blocks: List[Tuple[int,...]],
+                           col5_set: set,
+                           keep_col5_set: set) -> List[Tuple[int,...]]:
+    """
+    Proper truncation: keep a 5-block if its point from column-5 is kept;
+    else drop that point ⇒ 4-block.
+    """
+    design = []
+    for B in td5_blocks:
+        c5 = next(x for x in B if x in col5_set)
+        if c5 in keep_col5_set:
+            design.append(tuple(sorted(B)))
+        else:
+            design.append(tuple(sorted(y for y in B if y != c5)))
+    # dedup
+    return sorted(set(design))
+
+def _relabel(blocks: List[Tuple[int,...]], perm: Dict[int,int]) -> List[Tuple[int,...]]:
+    return sorted(set(tuple(sorted(perm[x] for x in B)) for B in blocks))
+
+def _apply_local_mapping(blocks: List[Tuple[int,...]], local2global: List[int]) -> List[Tuple[int,...]]:
+    """
+    Map blocks whose points are labeled 1..s to actual labels given by local2global (1-indexed list).
+    """
+    return sorted(set(tuple(sorted(local2global[x-1] for x in B)) for B in blocks))
+
+
 M4 = [0, 1, 4, 5, 8, 9, 12, 13, 28, 29]
 
-dict_ur = {0: 0, 1: 0, 4: 0, 5: 0, 8: 0, 9: 0, 12: 0, 13: 0, 16: 4, 17: 4, 20: 4, 21: 5, 24: 5, 25: 5, 28: 0, 29: 0,
-           32: 8, 33: 8, 36: 8, 37: 8, 40: 8, 41: 9, 44: 9, 45: 9, 48: 12, 49: 12, 52: 13, 53: 13, 56: 13, 57: 13,
-           60: 13, 61: 13, 64: 16, 65: 16, 68: 17, 69: 17, 72: 17, 73: 17, 76: 17, 77: 17, 80: 20, 81: 20, 84: 20,
-           85: 20, 88: 20, 89: 20, 92: 20, 93: 20, 96: 20, 97: 20, 100: 25, 101: 25}
+# dict_ur = {0: 0, 1: 0, 4: 0, 5: 0, 8: 0, 9: 0, 12: 0, 13: 0, 16: 4, 17: 4, 20: 4, 21: 5, 24: 5, 25: 5, 28: 0, 29: 0,
+#            32: 8, 33: 8, 36: 8, 37: 8, 40: 8, 41: 9, 44: 9, 45: 9, 48: 12, 49: 12, 52: 13, 53: 13, 56: 13, 57: 13,
+#            60: 13, 61: 13, 64: 16, 65: 16, 68: 17, 69: 17, 72: 17, 73: 17, 76: 17, 77: 17, 80: 20, 81: 20, 84: 20,
+#            85: 20, 88: 20, 89: 20, 92: 20, 93: 20, 96: 20, 97: 20, 100: 25, 101: 25}
 
 # dict_rm = {16: 4, 17: 4, 20: 4, 25: 5, 32: 8, 37: 8, 41: 9}
 
@@ -462,77 +600,230 @@ def bibd4_m4(m, blocks=None):  # generate BIBD(3m+1,4,1) by Table 5.3
     return blocks
 
 
-def u45(u, design=None, groups=None):  # Intermediate design {4,5}-GDD of order u and groups in M4
+def u45(u, design=None, groups=None, enforce_mod: bool = True):  # Intermediate design {4,5}-GDD of order u and groups in M4
     u = int(u)
     if groups is None:
         groups = []
     if design is None:
         design = []
-    assert u % 4 in [0, 1], f'input {u} is not congruent to 0 or 1 (mod 4)!'
-    r = dict_ur[int(u)]
-    r1 = u - 4 * r
+    if enforce_mod:
+        assert u % 4 in (0, 1), f"input {u} is not congruent to 0 or 1 (mod 4)!"
+    # r = dict_ur[int(u)]
+    # r1 = u - 4 * r
     if u in M4:
         groups.append(tuple(range(1, u + 1)))
+    # elif u >= 52:
+    #     # trans_blocks = transversal.trans_trim(transversal.trans2(r), 5)
+    #     # truncated_blocks = transversal.truncate(trans_blocks, r1)
+    #     u_design = transversal.truncate(transversal.trans_trim(transversal.trans2(r), 5), r1)
+    #     if r not in M4:
+    #         m = dict_ur[r]
+    #         r2 = r - 4 * m
+    #         # if r2 == m:
+    #         #     r2 = 0
+    #         r_design = transversal.truncate(transversal.trans_trim(transversal.trans2(m), 5), r2)
+    #         # groups.extend([tuple(range(1,m+1)),tuple(range(m+1,2*m+1)),tuple(range(2*m+1,3*m+1)),tuple(range(3*m+1,4*m+1)),tuple(range(4*m+1,r+1))])
+    #         for t in range(4):
+    #             groups.extend([tuple(range(t * r + 1, t * r + m + 1)), tuple(range(t * r + m + 1, t * r + 2 * m + 1)),
+    #                            tuple(range(t * r + 2 * m + 1, t * r + 3 * m + 1)),
+    #                            tuple(range(t * r + 3 * m + 1, t * r + 4 * m + 1))])
+    #         if r2 > 0:
+    #             for t in range(4):
+    #                 groups.append(tuple(range(t * r + 4 * m + 1, t * r + r + 1)))
+    #         # fill in r-holes in u-design...
+    #         r_design_1 = []
+    #         for block_tmp in r_design:
+    #             new_block_tmp = tuple(x + r for x in block_tmp)
+    #             r_design_1.append(new_block_tmp)
+    #         r_design_2 = []
+    #         for block_tmp in r_design_1:
+    #             new_block_tmp = tuple(x + r for x in block_tmp)
+    #             r_design_2.append(new_block_tmp)
+    #         r_design_3 = []
+    #         for block_tmp in r_design_2:
+    #             new_block_tmp = tuple(x + r for x in block_tmp)
+    #             r_design_3.append(new_block_tmp)
+    #         u_design.extend(r_design)
+    #         u_design.extend(r_design_1)
+    #         u_design.extend(r_design_2)
+    #         u_design.extend(r_design_3)
+    #     else:
+    #         groups.extend([tuple(range(1, r + 1)), tuple(range(r + 1, 2 * r + 1)), tuple(range(2 * r + 1, 3 * r + 1)),
+    #                        tuple(range(3 * r + 1, 4 * r + 1))])
+    #     if r1 not in M4:
+    #         m1 = dict_ur[r1]
+    #         r3 = r1 - 4 * m1
+    #         r1_design = transversal.truncate(transversal.trans_trim(transversal.trans2(m1), 5), r3)
+    #         groups.extend([tuple(range(4 * r + 1, 4 * r + m1 + 1)), tuple(range(4 * r + m1 + 1, 4 * r + 2 * m1 + 1)),
+    #                        tuple(range(4 * r + 2 * m1 + 1, 4 * r + 3 * m1 + 1)),
+    #                        tuple(range(4 * r + 3 * m1 + 1, 4 * r + 4 * m1 + 1))])
+    #         if r3 > 0:
+    #             groups.append(tuple(range(4 * r + 4 * m1 + 1, u + 1)))
+    #         # fill in r1-hole in u-design...
+    #         r1_design_4 = []
+    #         for block_tmp in r1_design:
+    #             new_block_tmp = tuple(x + 4 * r for x in block_tmp)
+    #             r1_design_4.append(new_block_tmp)
+    #         u_design.extend(r1_design_4)
+    #     elif r1 > 0:
+    #         groups.extend([tuple(range(4 * int(r) + 1, int(u) + 1))])
+    #     design = sorted(u_design)
+    #     groups = sorted(groups)
+    #     # print('u45:')
+    #     # print(design)
+    #     # print(groups)
+
     elif u >= 52:
-        # trans_blocks = transversal.trans_trim(transversal.trans2(r), 5)
-        # truncated_blocks = transversal.truncate(trans_blocks, r1)
-        u_design = transversal.truncate(transversal.trans_trim(transversal.trans2(r), 5), r1)
-        if r not in M4:
-            m = dict_ur[r]
-            r2 = r - 4 * m
-            # if r2 == m:
-            #     r2 = 0
-            r_design = transversal.truncate(transversal.trans_trim(transversal.trans2(m), 5), r2)
-            # groups.extend([tuple(range(1,m+1)),tuple(range(m+1,2*m+1)),tuple(range(2*m+1,3*m+1)),tuple(range(3*m+1,4*m+1)),tuple(range(4*m+1,r+1))])
-            for t in range(4):
-                groups.extend([tuple(range(t * r + 1, t * r + m + 1)), tuple(range(t * r + m + 1, t * r + 2 * m + 1)),
-                               tuple(range(t * r + 2 * m + 1, t * r + 3 * m + 1)),
-                               tuple(range(t * r + 3 * m + 1, t * r + 4 * m + 1))])
-            if r2 > 0:
-                for t in range(4):
-                    groups.append(tuple(range(t * r + 4 * m + 1, t * r + r + 1)))
-            # fill in r-holes in u-design...
-            r_design_1 = []
-            for block_tmp in r_design:
-                new_block_tmp = tuple(x + r for x in block_tmp)
-                r_design_1.append(new_block_tmp)
-            r_design_2 = []
-            for block_tmp in r_design_1:
-                new_block_tmp = tuple(x + r for x in block_tmp)
-                r_design_2.append(new_block_tmp)
-            r_design_3 = []
-            for block_tmp in r_design_2:
-                new_block_tmp = tuple(x + r for x in block_tmp)
-                r_design_3.append(new_block_tmp)
-            u_design.extend(r_design)
-            u_design.extend(r_design_1)
-            u_design.extend(r_design_2)
-            u_design.extend(r_design_3)
-        else:
-            groups.extend([tuple(range(1, r + 1)), tuple(range(r + 1, 2 * r + 1)), tuple(range(2 * r + 1, 3 * r + 1)),
-                           tuple(range(3 * r + 1, 4 * r + 1))])
-        if r1 not in M4:
-            m1 = dict_ur[r1]
-            r3 = r1 - 4 * m1
-            r1_design = transversal.truncate(transversal.trans_trim(transversal.trans2(m1), 5), r3)
-            groups.extend([tuple(range(4 * r + 1, 4 * r + m1 + 1)), tuple(range(4 * r + m1 + 1, 4 * r + 2 * m1 + 1)),
-                           tuple(range(4 * r + 2 * m1 + 1, 4 * r + 3 * m1 + 1)),
-                           tuple(range(4 * r + 3 * m1 + 1, 4 * r + 4 * m1 + 1))])
-            if r3 > 0:
-                groups.append(tuple(range(4 * r + 4 * m1 + 1, u + 1)))
-            # fill in r1-hole in u-design...
-            r1_design_4 = []
-            for block_tmp in r1_design:
-                new_block_tmp = tuple(x + 4 * r for x in block_tmp)
-                r1_design_4.append(new_block_tmp)
-            u_design.extend(r1_design_4)
-        elif r1 > 0:
-            groups.extend([tuple(range(4 * int(r) + 1, int(u) + 1))])
-        design = sorted(u_design)
-        groups = sorted(groups)
-        # print('u45:')
-        # print(design)
-        # print(groups)
+
+        # 0) choose r and compute u1
+
+        r = pick_r_hardwired(u, fallback_pick_r=pick_r)  # your picker (can be hard-wired for special u)
+
+        u1 = u - 4 * r  # size of truncated 5th column; 0 <= u1 <= r, u1 ≡ u (mod 4)
+
+        # 1) build TD(5,r) on a fresh local label set 1..5r and TRIM to 5
+
+        TD_full = transversal.trans2(r)
+
+        TD5 = transversal.trans_trim(TD_full, 5)  # ensure 5 columns in each block
+
+        # 2) recover columns (local labels 1..5r)
+
+        cols = _recover_5_columns(TD5)
+
+        if len(cols) != 5 or any(len(c) != r for c in cols):
+            raise RuntimeError(f"[u45] TRIM did not yield 5 columns of size r; sizes={[len(c) for c in cols]}")
+
+        cols.sort(key=lambda g: min(g))
+
+        C0, C1, C2, C3, C4 = cols
+
+        C4_set = set(C4)
+
+        keep_C4 = set(list(C4)[:u1])  # keep first u1 points from column 5
+
+        # 3) proper truncation at this level (local labels)
+
+        outer_local = _proper_truncate_to_45(TD5, set(C4), keep_C4)
+
+        # 4) map this level's points onto the actual global labels 1..u
+
+        #    We want final contiguous groups: G0:[1..r], G1:[r+1..2r], G2:[2r+1..3r], G3:[3r+1..4r], G4:[4r+1..4r+u1]
+
+        perm = {}
+
+        nxt = 1
+
+        for col in (C0, C1, C2, C3):
+
+            for x in col:
+                perm[x] = nxt;
+                nxt += 1
+
+        for x in C4:
+
+            if x in keep_C4:
+                perm[x] = nxt;
+                nxt += 1
+
+        outer_blocks = _relabel(outer_local, perm)
+
+        # 5) prepare the 5 column label lists in global coordinates for recursion
+
+        G0 = [perm[x] for x in C0]
+
+        G1 = [perm[x] for x in C1]
+
+        G2 = [perm[x] for x in C2]
+
+        G3 = [perm[x] for x in C3]
+
+        G4 = [perm[x] for x in C4 if x in keep_C4]  # truncated fifth group
+
+        # 6) recursively "solve" each column whose size is not in M4
+
+        #    IMPORTANT: inner blocks are built on the column's *own* points and then unioned.
+
+        total_blocks = set(outer_blocks)
+
+        final_groups = []
+
+        def _recurse_column(col_labels: List[int]):
+
+            s = len(col_labels)
+
+            if s == 0:
+                return [], []
+
+            if s in M4:
+                return [], [tuple(sorted(col_labels))]
+
+            # build a local u45(s) on 1..s and map back to 'col_labels'
+
+            # u45 returns (blocks, groups) already as a {4,5}-GDD on 1..s
+
+            inner_blocks_local, inner_groups_local = u45(s)
+
+            # map inner blocks/groups back to global labels by col_labels mapping
+
+            inner_blocks_global = _apply_local_mapping(inner_blocks_local, col_labels)
+
+            inner_groups_global = [tuple(col_labels[i - 1] for i in group) for group in inner_groups_local]
+
+            return inner_blocks_global, inner_groups_global
+
+        # Column 0
+
+        b0, g0 = _recurse_column(G0);
+        total_blocks.update(b0);
+        final_groups.extend(g0)
+
+        # Column 1
+
+        b1, g1 = _recurse_column(G1);
+        total_blocks.update(b1);
+        final_groups.extend(g1)
+
+        # Column 2
+
+        b2, g2 = _recurse_column(G2);
+        total_blocks.update(b2);
+        final_groups.extend(g2)
+
+        # Column 3
+
+        b3, g3 = _recurse_column(G3);
+        total_blocks.update(b3);
+        final_groups.extend(g3)
+
+        # Column 4 (if any)
+
+        if u1 > 0:
+            b4, g4 = _recurse_column(G4);
+            total_blocks.update(b4);
+            final_groups.extend(g4)
+
+        # 7) safety: groups must partition 1..u
+
+        cover = set(x for G in final_groups for x in G)
+
+        need = set(range(1, u + 1))
+
+        if cover != need:
+            missing = sorted(need - cover)[:10]
+
+            raise RuntimeError(f"[u45] groups do not cover 1..{u}; missing e.g. {missing}")
+
+        # IMPORTANT: we returned both outer TD blocks and all inner blocks.
+
+        # Now every pair across distinct final groups occurs exactly once.
+
+        design = sorted(total_blocks)
+
+        groups = sorted(tuple(sorted(G)) for G in final_groups)
+
+        return design, groups
+
     elif u in [16, 17, 20]:
         design = transversal.truncate(transversal.trans1(2, 2), u - 16)
         groups.extend([(1, 2, 3, 4), (5, 6, 7, 8), (9, 10, 11, 12), (13, 14, 15, 16)])
@@ -618,9 +909,10 @@ def u45(u, design=None, groups=None):  # Intermediate design {4,5}-GDD of order 
 
 def bibd4(v):  # generate BIBD(v,4,1) by Lem 5.11
     assert v % 12 in [1, 4], f'input {v} is not congruent to 1 or 4 (mod 12)!'
-    u = (v - 1) / 3
+    u = (v - 1) // 3
     u_design, u_groups = u45(u)
-    # print(u_design)
+    print(u_groups)
+    u_design = sorted(set(u_design))
     blocks = []
     for master_block in u_design:
         indices = []
@@ -657,9 +949,16 @@ def bibd4(v):  # generate BIBD(v,4,1) by Lem 5.11
 
 
 if __name__ == '__main__':
+    # blocks = bibd4(361)
+    # print(blocks)
     # blocks = bibd4(64)
     # print(blocks)
-    d = bibd4_m4(29)
-    print(d)
+    # d = bibd4_m4(29)
+    # print(d)
     # result = bibd4(37)
     # print(result)
+
+    for u in (52, 100, 116, 400):
+        print("\n=== u =", u, "===")
+        design, groups = u45(u)  # this will print the diagnostics we inserted
+        print(f"[driver] got b={len(design)} blocks and {len(groups)} groups")

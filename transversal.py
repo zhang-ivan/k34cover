@@ -7,7 +7,9 @@ from primefac import primefac
 from pg2 import pg2
 
 
-def trans1(p, alpha, blocks=None, groups=None):  # generate T[q+1,1;q] for q=p**alpha by Lem 3.5
+def trans1(p, alpha, blocks=None, groups=None):
+    """Lemma 3.5"""
+    # generate T[q+1,1;q] for q=p**alpha by Lem 3.5
     if groups is None:
         groups = []
     q = p ** alpha
@@ -54,6 +56,7 @@ def trans1(p, alpha, blocks=None, groups=None):  # generate T[q+1,1;q] for q=p**
 
 
 def trans_trim(blocks, t=5):  # Trim a T[s,1;r] to get T[t,1;r] for t<=s
+    """Lemma 3.1"""
     # r = math.sqrt(len(blocks))
     new_blocks = []
     for block in blocks:
@@ -65,7 +68,7 @@ def trans_trim(blocks, t=5):  # Trim a T[s,1;r] to get T[t,1;r] for t<=s
 
 
 def trans_mult(blocks_1, blocks_2, blocks=None):  # multiplication of T[s,1;r1] and T[s,1;r2] gives T[s,1;r1*r2]
-    # by Lem 3.4
+    """Lemma 3.4"""
     if blocks is None:
         blocks = []
     # r1 = math.sqrt(len(blocks_1))
@@ -98,6 +101,7 @@ def prime_factor_mult(n):  # get all prime factors and the corresponding multipl
 
 
 def trans2(r):  # get T[s,1;r] for s=1+min(pi**ai) by Thm 3.1
+    """Theorem 3.1"""
     factors_dict = prime_factor_mult(r)
     min_factor = min(factors_dict, key=lambda factor: factor ** factors_dict[factor])
     # print(min_factor)
@@ -135,6 +139,7 @@ def truncate(blocks, r1):  # truncate a group from T[s,1;r] to resize it to r1<=
 
 
 def trans_resolve(blocks):  # Form RT[s-1,1;r] from T[s,1;r] by Lem 3.6
+    """Lemma 3.6"""
     s = len(blocks[0])
     l_ = len(blocks)
     r = int(math.sqrt(l_))
@@ -177,5 +182,7 @@ if __name__ == '__main__':
     # trans_mult(trans1(2, 1), trans1(2, 1))
 
     # truncate(trans2(20), 10)
-    trans_design = trans2(21)
+    trans_design = trans2(7)
+    print(trans_design)
+    trans_design = trans_trim(trans_design)
     print(trans_design)

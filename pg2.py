@@ -3,6 +3,7 @@ import galois
 
 
 def pg2(p, alpha, blocks=None):  # generate PG(2, p**alpha) by Thm 2.1
+    """Theorem 2.1"""
     if blocks is None:
         blocks = []
     assert sympy.isprime(p), f'Input {p} is not prime!'

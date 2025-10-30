@@ -76,7 +76,7 @@ def cover_k3k4(v, cover=None, xi=None):  # generate minimum K3 and K4 cover of K
 
 
 if __name__ == '__main__':
-    c, x = cover_k3k4(64)
+    c, x = cover_k3k4(1201)
 
     print(c)
     print(x)
