@@ -137,39 +137,39 @@ def truncate(blocks, r1):  # truncate a group from T[s,1;r] to resize it to r1<=
         return blocks
 
 
-def trans_resolve(blocks):  # Form RT[s-1,1;r] from T[s,1;r] by Lem 3.6
-    """Lemma 3.6"""
-    s = len(blocks[0])
-    l_ = len(blocks)
-    r = int(math.sqrt(l_))
-    pc = []
-    for i in range(s):
-        pc.append([])
-    # Assume the groups are well partitioned and ordered in the inputted blocks...
-    for blk_ in blocks:
-        for i in range(s):
-            if r * s - s + 1 + i in blk_:
-                blk_ = tuple(x for x in blk_ if x != r * s - s + 1 + i)
-                pc[i].append(blk_)
-    # pc = numpy.array(pc)
-    # print('pc:')
-    # print(pc)
-
-    # Relabelling parallel classes...
-    indices = []
-    for i in range(s - 1):
-        for tpl_ in pc[0]:
-            indices.append(tpl_[i])
-    class_1 = []
-    for i in range(1, r + 1):
-        class_1.append(tuple(range(i, i + (s - 1) * r, r)))
-    new_pc = [class_1]
-    for i in range(1, len(pc)):
-        new_class = []
-        for tuple_ in pc[i]:
-            new_class.append(tuple(indices.index(x) + 1 for x in tuple_))
-        new_pc.append(new_class)
-    return new_pc
+# def trans_resolve(blocks):  # Form RT[s-1,1;r] from T[s,1;r] by Lem 3.6
+#     """Lemma 3.6"""
+#     s = len(blocks[0])
+#     l_ = len(blocks)
+#     r = int(math.sqrt(l_))
+#     pc = []
+#     for i in range(s):
+#         pc.append([])
+#     # Assume the groups are well partitioned and ordered in the inputted blocks...
+#     for blk_ in blocks:
+#         for i in range(s):
+#             if r * s - s + 1 + i in blk_:
+#                 blk_ = tuple(x for x in blk_ if x != r * s - s + 1 + i)
+#                 pc[i].append(blk_)
+#     # pc = numpy.array(pc)
+#     # print('pc:')
+#     # print(pc)
+#
+#     # Relabelling parallel classes...
+#     indices = []
+#     for i in range(s - 1):
+#         for tpl_ in pc[0]:
+#             indices.append(tpl_[i])
+#     class_1 = []
+#     for i in range(1, r + 1):
+#         class_1.append(tuple(range(i, i + (s - 1) * r, r)))
+#     new_pc = [class_1]
+#     for i in range(1, len(pc)):
+#         new_class = []
+#         for tuple_ in pc[i]:
+#             new_class.append(tuple(indices.index(x) + 1 for x in tuple_))
+#         new_pc.append(new_class)
+#     return new_pc
 
 
 if __name__ == '__main__':
@@ -184,4 +184,6 @@ if __name__ == '__main__':
     trans_design = trans2(7)
     print(trans_design)
     trans_design = trans_trim(trans_design)
+    print(trans_design)
+    trans_design = truncate(trans_design, 3)
     print(trans_design)

@@ -98,7 +98,7 @@ def assign_diagonal(cover, order_):  # Input a sorted cover!
 
 
 if __name__ == '__main__':
-    for order in range(227, 1201):
+    for order in range(196, 400):
         if order % 12 in [0, 1, 2, 3, 4, 11]:
             print('------------')
             print(f'order = {order}')

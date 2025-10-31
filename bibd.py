@@ -744,61 +744,97 @@ def u45(u, design=None, groups=None, enforce_mod: bool = True):  # Intermediate 
     #     # print(design)
     #     # print(groups)
 
-    elif u >= 52:
-        # 1) pick r (hard-wired if applicable, else mod-0/1), compute u'
-        r = pick_r_mod01(u)
-        u1 = u - 4 * r  # 0 <= u1 <= r; u1 ≡ u (mod 4)
+    elif u>=52:
+        print('Encountered u>=52: ', u)
+        r=pick_r_mod01(u)
+        print('Chosen r: ', r)
+        r1 = u-4*r
+        print('Reduced to r1: ', r1)
+        trans_full = transversal.trans2(r)
+        design = transversal.trans_trim(trans_full, 5)
+        groups.extend([tuple(range(1,r+1)), tuple(range(r+1,2*r+1)),
+                       tuple(range(2*r+1,3*r+1)), tuple(range(3*r+1,4*r+1))])
+        if r1 < r:
+            design = transversal.truncate(design, r1)
+        if r1 > 0:
+            groups.append(tuple(range(4*r+1,4*r+r1+1)))
+            if r1 not in M4:
+                subdesign, subgroups = u45(r1)
+                left = 4*r+1
+                shifted_subdesign = [tuple(x + left - 1 for x in t) for t in subdesign]
+                shifted_subgroups = [tuple(x + left - 1 for x in t) for t in subgroups]
+                groups[4:5]=shifted_subgroups
+                design.extend(shifted_subdesign)
 
-        # 2) build TD(5,r) and (if your trans2 ever emits s>5) trim to s=5
-        TD_full = transversal.trans2(r)
-        TD5 = transversal.trans_trim(TD_full, 5)  # harmless if already 5
+        if r not in M4:
+            subdesign, subgroups = u45(r)
+            for i in range(0, 4):
+                left = i*r+1
+                shifted_subdesign = [tuple(x+left-1 for x in t) for t in subdesign]
+                shifted_subgroups = [tuple(x + left - 1 for x in t) for t in subgroups]
+                old_index = groups.index(tuple(range(i*r+1,(i+1)*r+1)))
+                groups[old_index:old_index+1]=shifted_subgroups
+                design.extend(shifted_subdesign)
 
-        # 3) proper truncation using contiguous labeling (no relabeling/recovery needed)
-        outer_blocks, outer_groups = _outer_blocks_and_groups_contiguous(TD5, r, u1)
 
-        # outer_groups are: [1..r], [r+1..2r], [2r+1..3r], [3r+1..4r], [4r+1..4r+u1]
-        # Build lists for each column to recurse if size ∉ M4
-        cols = []
-        cols.append(list(range(1, r + 1)))
-        cols.append(list(range(r + 1, 2 * r + 1)))
-        cols.append(list(range(2 * r + 1, 3 * r + 1)))
-        cols.append(list(range(3 * r + 1, 4 * r + 1)))
-        if u1 > 0:
-            cols.append(list(range(4 * r + 1, 4 * r + u1 + 1)))
-        else:
-            cols.append([])
 
-        # 4) recursively refine any column whose size ∉ M4 by building a subdesign on that column
-        total_blocks = set(outer_blocks)
-        final_groups = []
 
-        def _refine_column(col: list):
-            s = len(col)
-            if s == 0:
-                return [], []
-            if s in M4:
-                return [], [tuple(col)]
-            # Build a local {4,5}-GDD on labels 1..s, then map back via col[i-1]
-            sub_blocks_local, sub_groups_local = u45(s)
-            # Map local to global
-            sub_blocks = [tuple(sorted(col[i - 1] for i in B)) for B in sub_blocks_local]
-            sub_groups = [tuple(col[i - 1] for i in G) for G in sub_groups_local]
-            return sub_blocks, sub_groups
 
-        for c in cols:
-            b_sub, g_sub = _refine_column(c)
-            total_blocks.update(b_sub)
-            final_groups.extend(g_sub)
-
-        # Safety: groups must partition 1..u
-        cover = set(x for G in final_groups for x in G)
-        if cover != set(range(1, u + 1)):
-            missing = sorted(set(range(1, u + 1)) - cover)[:10]
-            raise RuntimeError(f"[u45] groups do not cover 1..{u}; missing e.g. {missing}")
-
-        design = sorted(total_blocks)
-        groups = sorted(tuple(sorted(G)) for G in final_groups)
-        return design, groups
+    # elif u >= 52:
+    #     # 1) pick r (hard-wired if applicable, else mod-0/1), compute u'
+    #     r = pick_r_mod01(u)
+    #     u1 = u - 4 * r  # 0 <= u1 <= r; u1 ≡ u (mod 4)
+    #
+    #     # 2) build TD(5,r) and (if your trans2 ever emits s>5) trim to s=5
+    #     TD_full = transversal.trans2(r)
+    #     TD5 = transversal.trans_trim(TD_full, 5)  # harmless if already 5
+    #
+    #     # 3) proper truncation using contiguous labeling (no relabeling/recovery needed)
+    #     outer_blocks, outer_groups = _outer_blocks_and_groups_contiguous(TD5, r, u1)
+    #
+    #     # outer_groups are: [1..r], [r+1..2r], [2r+1..3r], [3r+1..4r], [4r+1..4r+u1]
+    #     # Build lists for each column to recurse if size ∉ M4
+    #     cols = []
+    #     cols.append(list(range(1, r + 1)))
+    #     cols.append(list(range(r + 1, 2 * r + 1)))
+    #     cols.append(list(range(2 * r + 1, 3 * r + 1)))
+    #     cols.append(list(range(3 * r + 1, 4 * r + 1)))
+    #     if u1 > 0:
+    #         cols.append(list(range(4 * r + 1, 4 * r + u1 + 1)))
+    #     else:
+    #         cols.append([])
+    #
+    #     # 4) recursively refine any column whose size ∉ M4 by building a subdesign on that column
+    #     total_blocks = set(outer_blocks)
+    #     final_groups = []
+    #
+    #     def _refine_column(col: list):
+    #         s = len(col)
+    #         if s == 0:
+    #             return [], []
+    #         if s in M4:
+    #             return [], [tuple(col)]
+    #         # Build a local {4,5}-GDD on labels 1..s, then map back via col[i-1]
+    #         sub_blocks_local, sub_groups_local = u45(s)
+    #         # Map local to global
+    #         sub_blocks = [tuple(sorted(col[i - 1] for i in B)) for B in sub_blocks_local]
+    #         sub_groups = [tuple(col[i - 1] for i in G) for G in sub_groups_local]
+    #         return sub_blocks, sub_groups
+    #
+    #     for c in cols:
+    #         b_sub, g_sub = _refine_column(c)
+    #         total_blocks.update(b_sub)
+    #         final_groups.extend(g_sub)
+    #
+    #     # Safety: groups must partition 1..u
+    #     cover = set(x for G in final_groups for x in G)
+    #     if cover != set(range(1, u + 1)):
+    #         missing = sorted(set(range(1, u + 1)) - cover)[:10]
+    #         raise RuntimeError(f"[u45] groups do not cover 1..{u}; missing e.g. {missing}")
+    #
+    #     design = sorted(total_blocks)
+    #     groups = sorted(tuple(sorted(G)) for G in final_groups)
+    #     return design, groups
 
 
     elif u in [16, 17, 20]:
@@ -806,20 +842,32 @@ def u45(u, design=None, groups=None, enforce_mod: bool = True):  # Intermediate 
         groups.extend([(1, 2, 3, 4), (5, 6, 7, 8), (9, 10, 11, 12), (13, 14, 15, 16)])
         if u > 16:
             groups.append(tuple(range(17, u + 1)))
+
+
+
     elif u in [21, 24, 25]:
         design = transversal.truncate(transversal.trans_trim(transversal.trans1(5, 1), 5), u - 20)
         # print(design)
         groups.extend([(1, 2, 3, 4, 5), (6, 7, 8, 9, 10), (11, 12, 13, 14, 15), (16, 17, 18, 19, 20)])
         groups.append(tuple(range(21, u + 1)))
+
+
+
     elif u in [32, 33, 36, 37, 40]:
         design = transversal.truncate(transversal.trans_trim(transversal.trans1(2, 3), 5), u - 32)
         groups.extend([tuple(range(1, 9)), tuple(range(9, 17)), tuple(range(17, 25)), tuple(range(25, 33))])
         if u > 32:
             groups.append(tuple(range(33, u + 1)))
+
+
+
     elif u in [41, 44, 45]:
         design = transversal.truncate(transversal.trans_trim(transversal.trans1(3, 2), 5), u - 36)
         groups.extend([tuple(range(1, 10)), tuple(range(10, 19)), tuple(range(19, 28)), tuple(range(28, 37))])
         groups.append(tuple(range(37, u + 1)))
+
+
+
     elif u in [48, 49]:
         gdd6_12_6 = []
         for i in range(6):
@@ -877,10 +925,14 @@ def u45(u, design=None, groups=None, enforce_mod: bool = True):  # Intermediate 
         gdd5_12_5 = transversal.trans_trim(gdd6_12_6, 5)
         design = transversal.truncate(gdd5_12_5, u - 48)
         groups.extend([tuple(range(1, 13)), tuple(range(13, 25)), tuple(range(25, 37)), tuple(range(37, 49))])
+
         if u > 48:
             groups.append(tuple(range(49, u + 1)))
         # print(design)
         # print(groups)
+
+    # print(design)
+    print(groups)
     return design, groups
 
 
