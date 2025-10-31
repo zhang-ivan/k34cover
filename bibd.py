@@ -1,7 +1,4 @@
-import pg2
 import transversal
-import galois
-
 
 EXCEPT_R_MAP = {
     52: 13, 53: 13, 56: 13, 57: 13, 60: 13, 61: 13, 64: 13, 65: 13,
@@ -21,6 +18,38 @@ def pick_r_hardwired(u: int, *, fallback_pick_r):
         assert lo <= r <= hi and 0 <= u1 <= r, f"Hardwired r={r} invalid for u={u}"
         return r
     return fallback_pick_r(u)
+
+def pick_r_mod01(u: int) -> int:
+    """
+    Choose the largest r in [ceil(u/5), floor(u/4)] with r ≡ 0 or 1 (mod 4).
+    Assumes u ≥ 52 and u ≡ 0 or 1 (mod 4).
+    Ensures 0 ≤ u' = u - 4r ≤ r and u' ≡ u (mod 4).
+    """
+    assert u >= 52 and u % 4 in (0, 1), f"u={u} must be 0/1 (mod 4)"
+    L = (u + 4) // 5   # ceil(u/5)
+    H = u // 4         # floor(u/4)
+
+    # Start from the largest candidate and move down to a 0/1 (mod 4) residue.
+    r = H
+    while r >= L and (r % 4 not in (0, 1)):
+        r -= 1
+
+    if r < L:
+        # If stepping down skipped below L, round L upward to a 0/1 class instead.
+        cand0 = L + ((0 - L) % 4)   # first ≥L with residue 0
+        cand1 = L + ((1 - L) % 4)   # first ≥L with residue 1
+        # Prefer the larger valid candidate (closer to H) that lies within the window.
+        candidates = [c for c in (cand0, cand1) if L <= c <= H]
+        if not candidates:
+            raise ValueError(f"No r ≡ 0/1 (mod 4) in [{L},{H}] for u={u}")
+        r = max(candidates)
+
+    # Final sanity
+    u1 = u - 4*r
+    if not (L <= r <= H and 0 <= u1 <= r and r % 4 in (0, 1)):
+        raise ValueError(f"pick_r_mod01 failed sanity for u={u}, r={r}, u'={u1}, window=[{L},{H}]")
+
+    return r
 
 
 def pick_r(u: int) -> int:
@@ -138,6 +167,48 @@ def _apply_local_mapping(blocks: List[Tuple[int,...]], local2global: List[int]) 
     Map blocks whose points are labeled 1..s to actual labels given by local2global (1-indexed list).
     """
     return sorted(set(tuple(sorted(local2global[x-1] for x in B)) for B in blocks))
+
+def _outer_blocks_and_groups_contiguous(TD_blocks, r: int, u1: int):
+    """
+    TD_blocks: blocks from trans2(r) with 5 contiguous groups:
+      G0=[1..r], G1=[r+1..2r], G2=[2r+1..3r], G3=[3r+1..4r], G4=[4r+1..5r].
+    Properly truncate G4 to size u1:
+      - if the G4 element is ≤ 4r+u1, keep 5-block;
+      - else keep the remaining 4 points (a 4-block).
+    Returns (design_blocks, groups) on point set [1..(4r+u1)].
+    """
+    fifth_lo = 4*r + 1
+    fifth_hi = 5*r
+    cutoff   = 4*r + u1
+
+    design = []
+    for B in TD_blocks:
+        # find the G4 element (must be in [4r+1..5r])
+        g4 = None
+        for x in B:
+            if fifth_lo <= x <= fifth_hi:
+                g4 = x
+                break
+        if g4 is None:
+            continue  # defensive
+        if g4 <= cutoff:
+            design.append(tuple(sorted(B)))  # 5-block
+        else:
+            design.append(tuple(sorted(y for y in B if y != g4)))  # 4-block
+
+    design = sorted(set(design))
+
+    groups = [
+        tuple(range(1, r+1)),
+        tuple(range(r+1, 2*r+1)),
+        tuple(range(2*r+1, 3*r+1)),
+        tuple(range(3*r+1, 4*r+1)),
+    ]
+    if u1 > 0:
+        groups.append(tuple(range(4*r+1, 4*r+u1+1)))
+
+    return design, groups
+
 
 
 M4 = [0, 1, 4, 5, 8, 9, 12, 13, 28, 29]
@@ -674,155 +745,61 @@ def u45(u, design=None, groups=None, enforce_mod: bool = True):  # Intermediate 
     #     # print(groups)
 
     elif u >= 52:
+        # 1) pick r (hard-wired if applicable, else mod-0/1), compute u'
+        r = pick_r_mod01(u)
+        u1 = u - 4 * r  # 0 <= u1 <= r; u1 ≡ u (mod 4)
 
-        # 0) choose r and compute u1
-
-        r = pick_r_hardwired(u, fallback_pick_r=pick_r)  # your picker (can be hard-wired for special u)
-
-        u1 = u - 4 * r  # size of truncated 5th column; 0 <= u1 <= r, u1 ≡ u (mod 4)
-
-        # 1) build TD(5,r) on a fresh local label set 1..5r and TRIM to 5
-
+        # 2) build TD(5,r) and (if your trans2 ever emits s>5) trim to s=5
         TD_full = transversal.trans2(r)
+        TD5 = transversal.trans_trim(TD_full, 5)  # harmless if already 5
 
-        TD5 = transversal.trans_trim(TD_full, 5)  # ensure 5 columns in each block
+        # 3) proper truncation using contiguous labeling (no relabeling/recovery needed)
+        outer_blocks, outer_groups = _outer_blocks_and_groups_contiguous(TD5, r, u1)
 
-        # 2) recover columns (local labels 1..5r)
+        # outer_groups are: [1..r], [r+1..2r], [2r+1..3r], [3r+1..4r], [4r+1..4r+u1]
+        # Build lists for each column to recurse if size ∉ M4
+        cols = []
+        cols.append(list(range(1, r + 1)))
+        cols.append(list(range(r + 1, 2 * r + 1)))
+        cols.append(list(range(2 * r + 1, 3 * r + 1)))
+        cols.append(list(range(3 * r + 1, 4 * r + 1)))
+        if u1 > 0:
+            cols.append(list(range(4 * r + 1, 4 * r + u1 + 1)))
+        else:
+            cols.append([])
 
-        cols = _recover_5_columns(TD5)
-
-        if len(cols) != 5 or any(len(c) != r for c in cols):
-            raise RuntimeError(f"[u45] TRIM did not yield 5 columns of size r; sizes={[len(c) for c in cols]}")
-
-        cols.sort(key=lambda g: min(g))
-
-        C0, C1, C2, C3, C4 = cols
-
-        C4_set = set(C4)
-
-        keep_C4 = set(list(C4)[:u1])  # keep first u1 points from column 5
-
-        # 3) proper truncation at this level (local labels)
-
-        outer_local = _proper_truncate_to_45(TD5, set(C4), keep_C4)
-
-        # 4) map this level's points onto the actual global labels 1..u
-
-        #    We want final contiguous groups: G0:[1..r], G1:[r+1..2r], G2:[2r+1..3r], G3:[3r+1..4r], G4:[4r+1..4r+u1]
-
-        perm = {}
-
-        nxt = 1
-
-        for col in (C0, C1, C2, C3):
-
-            for x in col:
-                perm[x] = nxt;
-                nxt += 1
-
-        for x in C4:
-
-            if x in keep_C4:
-                perm[x] = nxt;
-                nxt += 1
-
-        outer_blocks = _relabel(outer_local, perm)
-
-        # 5) prepare the 5 column label lists in global coordinates for recursion
-
-        G0 = [perm[x] for x in C0]
-
-        G1 = [perm[x] for x in C1]
-
-        G2 = [perm[x] for x in C2]
-
-        G3 = [perm[x] for x in C3]
-
-        G4 = [perm[x] for x in C4 if x in keep_C4]  # truncated fifth group
-
-        # 6) recursively "solve" each column whose size is not in M4
-
-        #    IMPORTANT: inner blocks are built on the column's *own* points and then unioned.
-
+        # 4) recursively refine any column whose size ∉ M4 by building a subdesign on that column
         total_blocks = set(outer_blocks)
-
         final_groups = []
 
-        def _recurse_column(col_labels: List[int]):
-
-            s = len(col_labels)
-
+        def _refine_column(col: list):
+            s = len(col)
             if s == 0:
                 return [], []
-
             if s in M4:
-                return [], [tuple(sorted(col_labels))]
+                return [], [tuple(col)]
+            # Build a local {4,5}-GDD on labels 1..s, then map back via col[i-1]
+            sub_blocks_local, sub_groups_local = u45(s)
+            # Map local to global
+            sub_blocks = [tuple(sorted(col[i - 1] for i in B)) for B in sub_blocks_local]
+            sub_groups = [tuple(col[i - 1] for i in G) for G in sub_groups_local]
+            return sub_blocks, sub_groups
 
-            # build a local u45(s) on 1..s and map back to 'col_labels'
+        for c in cols:
+            b_sub, g_sub = _refine_column(c)
+            total_blocks.update(b_sub)
+            final_groups.extend(g_sub)
 
-            # u45 returns (blocks, groups) already as a {4,5}-GDD on 1..s
-
-            inner_blocks_local, inner_groups_local = u45(s)
-
-            # map inner blocks/groups back to global labels by col_labels mapping
-
-            inner_blocks_global = _apply_local_mapping(inner_blocks_local, col_labels)
-
-            inner_groups_global = [tuple(col_labels[i - 1] for i in group) for group in inner_groups_local]
-
-            return inner_blocks_global, inner_groups_global
-
-        # Column 0
-
-        b0, g0 = _recurse_column(G0);
-        total_blocks.update(b0);
-        final_groups.extend(g0)
-
-        # Column 1
-
-        b1, g1 = _recurse_column(G1);
-        total_blocks.update(b1);
-        final_groups.extend(g1)
-
-        # Column 2
-
-        b2, g2 = _recurse_column(G2);
-        total_blocks.update(b2);
-        final_groups.extend(g2)
-
-        # Column 3
-
-        b3, g3 = _recurse_column(G3);
-        total_blocks.update(b3);
-        final_groups.extend(g3)
-
-        # Column 4 (if any)
-
-        if u1 > 0:
-            b4, g4 = _recurse_column(G4);
-            total_blocks.update(b4);
-            final_groups.extend(g4)
-
-        # 7) safety: groups must partition 1..u
-
+        # Safety: groups must partition 1..u
         cover = set(x for G in final_groups for x in G)
-
-        need = set(range(1, u + 1))
-
-        if cover != need:
-            missing = sorted(need - cover)[:10]
-
+        if cover != set(range(1, u + 1)):
+            missing = sorted(set(range(1, u + 1)) - cover)[:10]
             raise RuntimeError(f"[u45] groups do not cover 1..{u}; missing e.g. {missing}")
 
-        # IMPORTANT: we returned both outer TD blocks and all inner blocks.
-
-        # Now every pair across distinct final groups occurs exactly once.
-
         design = sorted(total_blocks)
-
         groups = sorted(tuple(sorted(G)) for G in final_groups)
-
         return design, groups
+
 
     elif u in [16, 17, 20]:
         design = transversal.truncate(transversal.trans1(2, 2), u - 16)

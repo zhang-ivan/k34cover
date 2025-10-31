@@ -1,7 +1,6 @@
 import copy
 import math
 
-import numpy
 from primefac import primefac
 
 from pg2 import pg2
