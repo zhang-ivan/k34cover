@@ -52,6 +52,7 @@ def k3k4cover_checker(v, input_design_):
     # difference = adjacency - theoretical
     # print(difference)
     check = numpy.array_equal(adjacency, theoretical)
+    assert check == True
     print(check)
 
 
@@ -98,7 +99,7 @@ def assign_diagonal(cover, order_):  # Input a sorted cover!
 
 
 if __name__ == '__main__':
-    for order in range(196, 400):
+    for order in range(7, 400):
         if order % 12 in [0, 1, 2, 3, 4, 11]:
             print('------------')
             print(f'order = {order}')

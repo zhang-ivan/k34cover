@@ -31,10 +31,10 @@ def trans1(p, alpha, blocks=None, groups=None):
     for group in groups:
         indices.extend(group)
     # print(indices)
-    groups_new = []
-    for i in range(q + 1):
-        groups_new.append(tuple(range(i * q + 1, (i + 1) * q + 1)))
-    groups = groups_new
+    # groups_new = []
+    # for i in range(q + 1):
+    #     groups_new.append(tuple(range(i * q + 1, (i + 1) * q + 1)))
+    # groups = groups_new
     # print(groups)
     # dict_tmp = {}
     # for i in range(1, q * q + q + 1):
@@ -185,5 +185,5 @@ if __name__ == '__main__':
     print(trans_design)
     trans_design = trans_trim(trans_design)
     print(trans_design)
-    trans_design = truncate(trans_design, 3)
+    trans_design = truncate(trans_design, 0)
     print(trans_design)

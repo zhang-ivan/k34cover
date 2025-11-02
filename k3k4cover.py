@@ -1,4 +1,4 @@
-import bibd
+import bibd4
 
 
 def cover_k3k4(v, cover=None, xi=None):  # generate minimum K3 and K4 cover of Kv with minimum excess
@@ -10,7 +10,7 @@ def cover_k3k4(v, cover=None, xi=None):  # generate minimum K3 and K4 cover of K
     if v % 3 == 1:
         # excess = 0
         if v % 12 in [1, 4]:
-            cover = bibd.bibd4(v)
+            cover = bibd4.bibd4(v)
         else:
             cover = []
         # return cover
@@ -20,7 +20,7 @@ def cover_k3k4(v, cover=None, xi=None):  # generate minimum K3 and K4 cover of K
         cover = []
         groups = []
         if v % 12 in [0, 3]:
-            design = bibd.bibd4(v + 1)
+            design = bibd4.bibd4(v + 1)
             # print(design)
             for old_tuple in design:
                 new_tuple = [x_ for x_ in old_tuple if x_ != v + 1]
