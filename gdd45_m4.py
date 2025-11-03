@@ -5,7 +5,7 @@ from r_picker import pick_r_mod01_pp4 as r_picker
 
 M4 = {1, 4, 5, 8, 9, 12, 13, 28, 29}
 
-def verify_gdd_45_m4(u, blocks, groups, verbose=True):
+def _verify_gdd_45_m4(u, blocks, groups, verbose=True):
     ok = True
     msgs = []
 
@@ -277,7 +277,7 @@ def u45(u, design=None, groups=None, enforce_mod: bool = True):  # Intermediate 
                 if old_index is not None:
                     groups[old_index:old_index+1] = shifted_subgroups
                 design.extend(shifted_subdesign)
-                print(f"[u45] column {i}: replaced [{left},{right}] with {len(shifted_subgroups)} groups; added {len(shifted_subdesign)} blocks.")
+                # print(f"[u45] column {i}: replaced [{left},{right}] with {len(shifted_subgroups)} groups; added {len(shifted_subdesign)} blocks.")
 
         # ok_part, miss = _check_partition(groups, u)
         # print(f"[u45] EXIT u={u}  b={len(design)}  blk-size-hist={_blk_size_hist(design)}")
@@ -289,33 +289,6 @@ def u45(u, design=None, groups=None, enforce_mod: bool = True):  # Intermediate 
     # # Fallback: just in case (should not reach)
     # ok_part, miss = _check_partition(groups, u)
     # print(f"[u45][FALLBACK EXIT] u={u}  b={len(design)}  groups={_group_sizes(groups)}  partition-ok={ok_part} missing={miss}")
-    # # ---- sanity: cross-group pair coverage counts (quick numeric) ----
-    # from math import comb
-    #
-    # # expected cross-pair count given final groups
-    # exp_pairs = sum(
-    #     comb(len(A), 1) * comb(len(B), 1) for i, A in enumerate(groups) for j, B in enumerate(groups) if i < j)
-    #
-    # # each 4-block contributes 6 pairs, each 5-block contributes 10 pairs,
-    # # BUT only pairs across distinct groups should be counted.
-    # # So count pairs in blocks that come from distinct groups:
-    # def _cross_pairs_in_block(B, part):
-    #     # partition map
-    #     p2g = {}
-    #     for gi, G in enumerate(part):
-    #         for x in G:
-    #             p2g[x] = gi
-    #     pts = sorted(B)
-    #     c = 0
-    #     for i in range(len(pts)):
-    #         for j in range(i + 1, len(pts)):
-    #             if p2g[pts[i]] != p2g[pts[j]]:
-    #                 c += 1
-    #     return c
-    #
-    # got_pairs = sum(_cross_pairs_in_block(B, groups) for B in design)
-    #
-    # print(f"[u45] cross-pairs got={got_pairs} expected={exp_pairs}  match={got_pairs == exp_pairs}")
 
     return design, groups
 
@@ -328,4 +301,4 @@ if __name__ == '__main__':
         if u % 4 in [0, 1]:
             print("\n=== u =", u, "===")
             design, groups = u45(u)  # this will print the diagnostics we inserted
-            ok, msgs = verify_gdd_45_m4(u, design, groups)
+            ok, msgs = _verify_gdd_45_m4(u, design, groups)

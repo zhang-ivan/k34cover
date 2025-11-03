@@ -5,19 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2bb63d6f-5a64-4f4e-8152-0fde0ff159d8" name="Changes" comment="Result obtained for 7&lt;=v&lt;=300 and v congruent to 0, 1, 2, 3, 4, 11 (mod 12).">
-      <change afterPath="$PROJECT_DIR$/gdd45_m4.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/r_picker.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assign_diagonal.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/cover_generator.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/cover_generator.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bibd.py" beforeDir="false" afterPath="$PROJECT_DIR$/bibd4.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bibd4.py" beforeDir="false" afterPath="$PROJECT_DIR$/bibd4.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/check_cover.py" beforeDir="false" afterPath="$PROJECT_DIR$/check_cover.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/k3k4cover.py" beforeDir="false" afterPath="$PROJECT_DIR$/k3k4cover.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/run_u45_check.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/transversal.py" beforeDir="false" afterPath="$PROJECT_DIR$/transversal.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/verify_bibd.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/verify_bibd_detailed.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/verify_gdd_45.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gdd45_m4.py" beforeDir="false" afterPath="$PROJECT_DIR$/gdd45_m4.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -59,35 +53,35 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "Python.bibd.executor": "Run",
-    "Python.check_cover.executor": "Run",
-    "Python.k3k4cover.executor": "Run",
-    "Python.main.executor": "Run",
-    "Python.pg2.executor": "Run",
-    "Python.run_u45_check.executor": "Run",
-    "Python.transversal (1).executor": "Run",
-    "Python.transversal.executor": "Run",
-    "Python.u45_tmp.executor": "Run",
-    "Python.verify_bibd.executor": "Run",
-    "Python.verify_bibd_detailed.executor": "Run",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "master",
-    "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "/home/ivan/Documents/cover_generator",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "Console",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;Python.bibd.executor&quot;: &quot;Run&quot;,
+    &quot;Python.check_cover.executor&quot;: &quot;Run&quot;,
+    &quot;Python.k3k4cover.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.pg2.executor&quot;: &quot;Run&quot;,
+    &quot;Python.run_u45_check.executor&quot;: &quot;Run&quot;,
+    &quot;Python.transversal (1).executor&quot;: &quot;Run&quot;,
+    &quot;Python.transversal.executor&quot;: &quot;Run&quot;,
+    &quot;Python.u45_tmp.executor&quot;: &quot;Run&quot;,
+    &quot;Python.verify_bibd.executor&quot;: &quot;Run&quot;,
+    &quot;Python.verify_bibd_detailed.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/ivan/Documents/cover_generator&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;Console&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected="Python.check_cover">
     <configuration name="bibd4" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="cover_generator" />
@@ -386,16 +380,6 @@
           <url>file://$PROJECT_DIR$/main.py</url>
           <line>9</line>
           <option name="timeStamp" value="1" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/gdd45_m4.py</url>
-          <line>125</line>
-          <option name="timeStamp" value="58" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/gdd45_m4.py</url>
-          <line>128</line>
-          <option name="timeStamp" value="59" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

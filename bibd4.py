@@ -469,7 +469,7 @@ def bibd4(v):  # generate BIBD(v,4,1) by Lem 5.11
     assert v % 12 in [1, 4], f'input {v} is not congruent to 1 or 4 (mod 12)!'
     u = (v - 1) // 3
     u_design, u_groups = u45(u)
-    print(u_groups)
+    # print(u_groups)
     u_design = sorted(set(u_design))
     blocks = []
     for master_block in u_design:

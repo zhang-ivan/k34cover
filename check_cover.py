@@ -3,6 +3,10 @@ import sys
 import numpy
 import k3k4cover
 
+from datetime import datetime
+
+from assign_diagonal import assign_diagonal
+
 numpy.set_printoptions(threshold=sys.maxsize)
 
 
@@ -52,8 +56,9 @@ def k3k4cover_checker(v, input_design_):
     # difference = adjacency - theoretical
     # print(difference)
     check = numpy.array_equal(adjacency, theoretical)
-    assert check == True
+    assert check == True, f"Check failed for order = {v}!"
     print(check)
+    return check
 
 
 def sort_lost_of_tuples(original_cover):
@@ -75,48 +80,61 @@ def count_k3_k4(cover):  # Input a sorted cover!
     return alpha, beta
 
 
-def assign_diagonal(cover, order_):  # Input a sorted cover!
-    assigned_dict = {}
-    l_ = len(cover)
-    occurrence_ = []
-    for i in range(1, order_ + 1):
-        occurrence_.append([i])
-        for j in range(l_):
-            if i in cover[j]:
-                occurrence_[i - 1].append(cover[j])
-    while len(occurrence_) > 0:
-        occurrence_ = sorted(occurrence_, key=lambda x: len(x))
-        i_ = occurrence_[0][0]
-        assigned_dict[i_] = occurrence_[0][1]
-        for row in occurrence_:
-            try:
-                row.remove(assigned_dict[i_])
-            except ValueError:
-                pass
-        del occurrence_[0]
-    assigned_dict = dict(sorted(assigned_dict.items()))
-    return assigned_dict
+def main():
+    # create a timestamp like 2025-11-03_11-44-27
+    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    filename = f"output_{timestamp}.txt"
+
+    with open(filename, "w") as f:
+        for order in range(7, 1000):
+            if order % 12 in [0, 1, 2, 3, 4, 11]:
+                print('------------')
+                print(f'order = {order}')
+                f.write("------------\n")
+                f.write(f"order = {order}\n")
+
+                design_, xi = k3k4cover.cover_k3k4(order)
+                design = sort_lost_of_tuples(design_)
+
+                # f.write(f"design for K-{order}:\n{design}\n")
+
+                f.write(f"excess for K-{order}:\n{xi}\n")
+
+                count_k3, count_k4 = count_k3_k4(design)
+                f.write(f"number of triples: {count_k3}\n")
+                f.write(f"number of quadruples: {count_k4}\n")
+
+                # f.write("Assigning diagonal:\n")
+                # dict_diagonal = assign_diagonal(design, order)
+                # f.write(f"{dict_diagonal}\n")
+
+                f.write(f"check result for K-{order}:\n")
+                f.write(str(k3k4cover_checker(order, design)) + "\n\n")
+
+    print(f"Saved to {filename}")
 
 
 if __name__ == '__main__':
-    for order in range(7, 400):
-        if order % 12 in [0, 1, 2, 3, 4, 11]:
-            print('------------')
-            print(f'order = {order}')
-            design_, xi = k3k4cover.cover_k3k4(order)
-            design = sort_lost_of_tuples(design_)
-            # print(f'design for K-{order}:')
-            # print(design)
-            print(f'excess for K-{order}:')
-            print(xi)
-            count_k3, count_k4 = count_k3_k4(design)
-            print(f'number of triples: {count_k3}')
-            print(f'number of quadruples: {count_k4}')
-            # print('Assigning diagonal:')
-            # dict_diagonal = assign_diagonal(design, order)
-            # print(dict_diagonal)
-            print(f'check result for K-{order}:')
-            k3k4cover_checker(order, design)
+    main()
+    # for order in range(7, 400):
+    #     if order % 12 in [0, 1, 2, 3, 4, 11]:
+    #         print('------------')
+    #         print(f'order = {order}')
+    #         design_, xi = k3k4cover.cover_k3k4(order)
+    #         design = sort_lost_of_tuples(design_)
+    #         # print(f'design for K-{order}:')
+    #         # print(design)
+    #         print(f'excess for K-{order}:')
+    #         print(xi)
+    #         count_k3, count_k4 = count_k3_k4(design)
+    #         print(f'number of triples: {count_k3}')
+    #         print(f'number of quadruples: {count_k4}')
+    #         print('Assigning diagonal:')
+    #         dict_diagonal = assign_diagonal(design, order)
+    #         print(dict_diagonal)
+    #         print(f'check result for K-{order}:')
+    #         k3k4cover_checker(order, design)
+
 
     # order = 1201
     # design_, xi = k3k4cover.cover_k3k4(order)
