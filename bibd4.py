@@ -507,17 +507,17 @@ def bibd4(v):  # generate BIBD(v,4,1) by Lem 5.11
 
 
 if __name__ == '__main__':
-    # blocks = bibd4(361)
-    # print(blocks)
-    # blocks = bibd4(64)
-    # print(blocks)
-    # d = bibd4_m4(29)
-    # print(d)
-    # result = bibd4(37)
-    # print(result)
+    blocks = bibd4(361)
+    print(blocks)
+    blocks = bibd4(64)
+    print(blocks)
+    d = bibd4_m4(29)
+    print(d)
+    result = bibd4(37)
+    print(result)
 
-    for u in (48, 49):
-        print("\n=== u =", u, "===")
-        design, groups = u45(u)  # this will print the diagnostics we inserted
-        print(design)
-        print(f"[driver] got b={len(design)} blocks and {len(groups)} groups")
+    # for u in (48, 49):
+    #     print("\n=== u =", u, "===")
+    #     design, groups = u45(u)  # this will print the diagnostics we inserted
+    #     print(design)
+    #     print(f"[driver] got b={len(design)} blocks and {len(groups)} groups")

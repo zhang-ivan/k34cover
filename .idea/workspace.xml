@@ -5,12 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2bb63d6f-5a64-4f4e-8152-0fde0ff159d8" name="Changes" comment="Result obtained for 7&lt;=v&lt;=300 and v congruent to 0, 1, 2, 3, 4, 11 (mod 12).">
-      <change afterPath="$PROJECT_DIR$/assign_diagonal.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/cover_generator.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/cover_generator.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/bibd4.py" beforeDir="false" afterPath="$PROJECT_DIR$/bibd4.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/check_cover.py" beforeDir="false" afterPath="$PROJECT_DIR$/check_cover.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/gdd45_m4.py" beforeDir="false" afterPath="$PROJECT_DIR$/gdd45_m4.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

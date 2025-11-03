@@ -76,26 +76,6 @@ def _verify_gdd_45_m4(u, blocks, groups, verbose=True):
 
 def u45(u, design=None, groups=None, enforce_mod: bool = True):  # Intermediate design {4,5}-GDD of order u and groups in M4
     """Lemma 5.8"""
-    # # --- small helpers just for debugging/summary ---
-    # def _blk_size_hist(blocks):
-    #     from collections import Counter
-    #     return sorted(Counter(len(b) for b in blocks).items())
-    #
-    # def _group_sizes(gs):
-    #     return [len(g) for g in gs]
-    #
-    # def _window(u_):
-    #     L = (u_ + 4)//5
-    #     H = u_//4
-    #     return L, H
-    #
-    # def _check_partition(gs, u_):
-    #     cover = set(x for G in gs for x in G)
-    #     need  = set(range(1, u_+1))
-    #     ok = (cover == need)
-    #     return ok, sorted((need - cover))[:10]
-    #
-    # # ------------------------------------------------
     u = int(u)
     if groups is None:
         groups = []
@@ -107,9 +87,7 @@ def u45(u, design=None, groups=None, enforce_mod: bool = True):  # Intermediate 
     # print(f"[u45] ENTER u={u}")
 
     if u in M4:
-        # print(f"[u45] base case: u in M4 → single group [1...{u}]")
         groups.append(tuple(range(1, u + 1)))
-        # print(f"[u45] EXIT u={u}  b={len(design)}  groups={_group_sizes(groups)} (partition-ok={_check_partition(groups,u)[0]})")
 
     elif u in [16, 17, 20]:
         # print(f"[u45] small case {u} via trans1(2,2)")
@@ -117,7 +95,6 @@ def u45(u, design=None, groups=None, enforce_mod: bool = True):  # Intermediate 
         groups.extend([(1, 2, 3, 4), (5, 6, 7, 8), (9, 10, 11, 12), (13, 14, 15, 16)])
         if u > 16:
             groups.append(tuple(range(17, u + 1)))
-        # print(f"[u45] EXIT u={u}  b={len(design)}  groups={_group_sizes(groups)}")
 
 
     elif u in [21, 24, 25]:
@@ -125,7 +102,6 @@ def u45(u, design=None, groups=None, enforce_mod: bool = True):  # Intermediate 
         design = transversal.truncate(transversal.trans_trim(transversal.trans1(5, 1), 5), u - 20)
         groups.extend([(1, 2, 3, 4, 5), (6, 7, 8, 9, 10), (11, 12, 13, 14, 15), (16, 17, 18, 19, 20)])
         groups.append(tuple(range(21, u + 1)))
-        # print(f"[u45] EXIT u={u}  b={len(design)}  groups={_group_sizes(groups)}")
 
     elif u in [32, 33, 36, 37, 40]:
         # print(f"[u45] small case {u} via trans1(2,3) + trim")
@@ -133,14 +109,12 @@ def u45(u, design=None, groups=None, enforce_mod: bool = True):  # Intermediate 
         groups.extend([tuple(range(1, 9)), tuple(range(9, 17)), tuple(range(17, 25)), tuple(range(25, 33))])
         if u > 32:
             groups.append(tuple(range(33, u + 1)))
-        # print(f"[u45] EXIT u={u}  b={len(design)}  groups={_group_sizes(groups)}")
 
     elif u in [41, 44, 45]:
         # print(f"[u45] small case {u} via trans1(3,2) + trim")
         design = transversal.truncate(transversal.trans_trim(transversal.trans1(3, 2), 5), u - 36)
         groups.extend([tuple(range(1, 10)), tuple(range(10, 19)), tuple(range(19, 28)), tuple(range(28, 37))])
         groups.append(tuple(range(37, u + 1)))
-        # print(f"[u45] EXIT u={u}  b={len(design)}  groups={_group_sizes(groups)}")
 
     elif u in [48, 49]:
         # print(f"[u45] small case {u} via explicit 6×2 structure + trim")
@@ -202,7 +176,6 @@ def u45(u, design=None, groups=None, enforce_mod: bool = True):  # Intermediate 
         groups.extend([tuple(range(1, 13)), tuple(range(13, 25)), tuple(range(25, 37)), tuple(range(37, 49))])
         if u > 48:
             groups.append(tuple(range(49, u + 1)))
-        # print(f"[u45] EXIT u={u}  b={len(design)}  groups={_group_sizes(groups)}")
 
     elif u>=52:
         # L,H = _window(u)
@@ -214,11 +187,9 @@ def u45(u, design=None, groups=None, enforce_mod: bool = True):  # Intermediate 
 
         # TD build
         trans_full = transversal.trans2(r)
-        # print(f"[u45] trans2({r}) blocks={len(trans_full)}  (expect r^2)")
 
         # Trim to 5 columns (harmless if already 5)
         design = transversal.trans_trim(trans_full, 5)
-        # print(f"[u45] after trans_trim(...,5): blocks={len(design)}  blk-size-hist={_blk_size_hist(design)}")
 
         # Four contiguous groups of size r
         g_before = [
@@ -228,13 +199,10 @@ def u45(u, design=None, groups=None, enforce_mod: bool = True):  # Intermediate 
             tuple(range(3*r+1,4*r+1)),
         ]
         groups.extend(g_before)
-        # print(f"[u45] groups added (4×r): sizes={_group_sizes(g_before)}")
 
-        # Proper truncation of the 5th column via your truncate()
         if r1 < r:
             # print(f"[u45] truncating 5th column from {r} → r1={r1}")
             design = transversal.truncate(design, r1)
-            # print(f"[u45] after truncate: blocks={len(design)}  blk-size-hist={_blk_size_hist(design)}")
         # else:
             # print(f"[u45] no truncation needed (r1==r)")
 
@@ -253,13 +221,11 @@ def u45(u, design=None, groups=None, enforce_mod: bool = True):  # Intermediate 
                 # replace the single 5th group by its refined subgroups
                 groups[-1:] = shifted_subgroups
                 design.extend(shifted_subdesign)
-                # print(f"[u45] back from r1={r1}: added sub-blocks={len(shifted_subdesign)}; 5th split into sizes={_group_sizes(shifted_subgroups)}")
 
-        # Now handle the 4 big columns if r∉M4 (recursively and correctly add their inner blocks)
+        # Now handle the 4 big columns if r not in M4
         if r not in M4:
             # print(f"[u45] RECURSE into r={r} for each of 4 columns (since r∉M4)")
             subdesign, subgroups = u45(r)
-            # print(f"[u45] r={r} sub-result: sub-blocks={len(subdesign)} sub-groups-count={len(subgroups)} sizes={_group_sizes(subgroups)}")
 
             for i in range(0, 4):
                 left = i*r+1
@@ -278,18 +244,6 @@ def u45(u, design=None, groups=None, enforce_mod: bool = True):  # Intermediate 
                     groups[old_index:old_index+1] = shifted_subgroups
                 design.extend(shifted_subdesign)
                 # print(f"[u45] column {i}: replaced [{left},{right}] with {len(shifted_subgroups)} groups; added {len(shifted_subdesign)} blocks.")
-
-        # ok_part, miss = _check_partition(groups, u)
-        # print(f"[u45] EXIT u={u}  b={len(design)}  blk-size-hist={_blk_size_hist(design)}")
-        # print(f"[u45] groups={_group_sizes(groups)}  partition-ok={ok_part}  missing={miss}")
-
-
-
-
-    # # Fallback: just in case (should not reach)
-    # ok_part, miss = _check_partition(groups, u)
-    # print(f"[u45][FALLBACK EXIT] u={u}  b={len(design)}  groups={_group_sizes(groups)}  partition-ok={ok_part} missing={miss}")
-
     return design, groups
 
 
@@ -300,5 +254,5 @@ if __name__ == '__main__':
     for u in range(0,400):
         if u % 4 in [0, 1]:
             print("\n=== u =", u, "===")
-            design, groups = u45(u)  # this will print the diagnostics we inserted
+            design, groups = u45(u)
             ok, msgs = _verify_gdd_45_m4(u, design, groups)
