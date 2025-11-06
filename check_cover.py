@@ -80,13 +80,13 @@ def count_k3_k4(cover):  # Input a sorted cover!
     return alpha, beta
 
 
-def main():
+def main(lb, ub):
     # create a timestamp like 2025-11-03_11-44-27
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     filename = f"output_{timestamp}.txt"
 
     with open(filename, "w") as f:
-        for order in range(7, 1000):
+        for order in range(lb, ub):
             if order % 12 in [0, 1, 2, 3, 4, 11]:
                 print('------------')
                 print(f'order = {order}')
@@ -115,7 +115,9 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    LB=7
+    UB=1000
+    main(LB, UB)
     # for order in range(7, 400):
     #     if order % 12 in [0, 1, 2, 3, 4, 11]:
     #         print('------------')
