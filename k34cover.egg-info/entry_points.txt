@@ -1,0 +1,2 @@
+[console_scripts]
+k34cover = k34cover.cli:main

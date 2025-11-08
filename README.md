@@ -1,80 +1,136 @@
-# Minimal K3 and K4 Covers of Complete Graphs
+# Minimal K3 and K4 Covers of Complete Graphs with Minimum Excess
 
-This project constructs and checks small covers of the complete graph \(K_v\) using triangles (K3) and 4‑cliques (K4). It focuses on the admissible orders
-\[ v \equiv -1,0,1,2,3,4 \pmod{12} \]
-where minimal‑excess covers are expected to exist.
+This program constructs and verifies optimal covers of the complete graph K_v by 3-cliques (K3) and 4-cliques (K4).  
+It works for all admissible orders
 
-The main script is **check_cover.py**, which builds covers for a range of values and produces a report showing the number of blocks used, whether any edges are covered twice, and whether the result matches the predicted behaviour. The output is written to a timestamped text file.
+    v ≡ −1, 0, 1, 2, 3, 4 (mod 12)
+
+where minimal or near-minimal covers are known to exist.  
+The code outputs explicit lists of 3- and 4-vertex blocks covering every edge of K_v with the smallest possible excess.
 
 ---
 
-## Getting started
+## Installation
 
-You can run everything directly in Python:
+Clone the repository and install it locally:
 
 ```bash
-python check_cover.py
+git clone https://github.com/zhang-ivan/k34cover.git
+cd k34cover
+pip install -e .
 ```
 
-To test a different range of values, edit the call to `main(LB, UB)` at the bottom of the script.
+Requirements:
+- Python 3.9 or newer  
+- numpy, sympy, galois, primefac
 
-Typical dependencies include:
-- numpy
-- sympy
-- galois
-- primefac
-
-Install them using pip if necessary.
+All dependencies install automatically.
 
 ---
 
-## How the construction works
+## How to run
 
-The design behind this cover uses several building blocks:
+You can run the generator either as a command-line program or as a module.
 
-- `bibd4.py` generates block designs of size 4 at specific orders,
-- `gdd45_m4.py` assembles group‑divisible designs used inside the recursion,
-- `transversal.py` produces transversal designs needed as ingredients,
-- `pg2.py` builds finite projective planes that seed the transversal designs,
-- `r_picker.py` selects suitable parameters for certain recursive steps.
+### 1. Command line
 
-All of these components fit together to supply enough structure to build the final K3 and K4 cover.
+```bash
+k34cover --lb 7 --ub 60 --output my_report.txt
+```
 
-The script `k3k4cover.py` then translates these combinatorial designs into explicit triangle and 4‑clique blocks covering all edges of \(K_v\), with minimal excess. In the special cases \(v \equiv 2,11 \pmod{12}\), the theory predicts exactly two edges covered twice; the program reports those.
+### 2. Module form
 
-`assign_diagonal.py` exists as a simple helper for an auxiliary assignment step. It does not influence the cover generation itself and is not essential for normal use.
+```bash
+python -m k34cover.cli --lb 7 --ub 60 --output my_report.txt
+```
 
----
-
-## What the output says
-
-For each admissible \(v\), the report lists:
-- any edges that appear twice (the “excess”),
-- how many K3 and K4 blocks were used,
-- a final consistency check (True/False).
-
-If everything is correct, the check should be `True`. When \(v \equiv 2,11 \pmod{12}\), expect exactly two doubled edges.
+If you omit the `--output` argument, a timestamped file like  
+`output_2025-11-08_23-55-10.txt` is created automatically.
 
 ---
 
-## Structure overview
+## Output format
 
-- **check_cover.py** — main driver and verifier
-- **k3k4cover.py** — builds K3/K4 block lists from the design data
-- **bibd4.py** — provides BIBD(v,4,1) constructions or seeds
-- **gdd45_m4.py** — constructs \{4,5\}-GDDs with allowed group sizes
-- **transversal.py** — transversal design constructors
-- **pg2.py** — projective geometry needed for transversal designs
-- **r_picker.py** — parameter helper for recursion
-- **assign_diagonal.py** — optional bookkeeping/formatting helper
+For each admissible v, the report lists for example:
+
+```
+------------
+order = 52
+excess for K-52:
+[]
+number of triples: 221
+number of quadruples: 0
+check result for K-52:
+True
+```
+
+- **excess** – list of edges covered twice (empty if the cover is exact)
+- **number of triples / quadruples** – counts of K3 and K4 blocks
+- **check result** – confirmation that the multiplicity matrix is correct
+
+---
+
+## Background
+
+The construction is based on explicit combinatorial designs.
+
+- `bibd4.py` – builds BIBD(v,4,1) designs when they exist  
+- `gdd45_m4.py` – mixed group-divisible designs with block sizes 4 and 5  
+- `transversal.py` – transversal designs used in the recursion  
+- `pg2.py` – finite projective plane PG(2,q) generator  
+- `cover.py` – main routine constructing the K3/K4 cover  
+- `verify.py` – edge-multiplicity checks  
+- `utils/assign_diagonal.py` – optional helper for diagonal blocks assignment
+
+All constructions are algebraic; no brute-force search is used.
+
+---
+
+## Project layout
+
+```
+k34cover/
+├── __init__.py
+├── cli.py          # command-line interface
+├── cover.py        # K3 and K4 cover builder
+├── verify.py       # checking covers
+├── designs/
+│   ├── bibd4.py
+│   ├── gdd45_m4.py
+│   ├── pg2.py
+│   └── transversal.py
+└── utils/
+    └── assign_diagonal.py
+```
+
+After installation, the `k34cover` command and the module `k34cover.cli` are both available.
+
+---
+
+## Example (interactive use)
+
+```python
+from k34cover.cover import cover_k3k4
+
+res = cover_k3k4(52)
+print(res.v, res.n_k3, res.n_k4)
+print(res.xi)        # doubled edges, if any
+print(res.blocks[:5])
+```
 
 ---
 
 ## Notes
 
-- The cover is intended to be minimal in both size and excess.
-- The designs are completely combinatorial rather than brute-force.
-- The verifier is strict: if multiplicities do not match the expected pattern, the script stops with an error.
+- Each block is stored as a tuple of sorted vertices.
+- Verification ensures that each edge appears exactly once, except two edges when v ≡ 2 or 11 (mod 12).
+- Runtime is moderate even for large v since the method is purely combinatorial.
 
+---
 
+## License
+
+This project is distributed under the Creative Commons Attribution–NonCommercial 4.0 
+International License (CC BY-NC 4.0).  
+See the [LICENSE](LICENSE) file for the full text.
 

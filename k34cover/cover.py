@@ -1,12 +1,25 @@
-import bibd4
+from k34cover.designs import bibd4
+
+from dataclasses import dataclass
+from typing import List, Tuple
+
+Block = Tuple[int, ...]      # (a, b, c) for K3, (a, b, c, d) for K4
+Edge = Tuple[int, int]       # (u, v) with u < v guaranteed
+
+@dataclass(frozen=True)
+class CoverResult:
+    v: int
+    blocks: List[Block]       # all K3/K4 blocks, normalised (sorted vertices)
+    xi: List[Edge]            # edges covered twice (for v ≡ 2,11 mod 12)
+    n_k3: int
+    n_k4: int
 
 
-def cover_k3k4(v, cover=None, xi=None):  # generate minimum K3 and K4 cover of Kv with minimum excess
-    # if cover is None:
-    #     cover = []
-    if xi is None:
-        xi = []
-    assert v > 6, f'Input {v} less than 7!'
+def cover_k3k4(v: int) -> CoverResult:
+    cover: List[Block] = []
+    xi: List[Edge] = []
+    assert v > 6, f'Input v={v} is less than 7!'
+
     if v % 3 == 1:
         # excess = 0
         if v % 12 in [1, 4]:
@@ -53,7 +66,8 @@ def cover_k3k4(v, cover=None, xi=None):  # generate minimum K3 and K4 cover of K
     else:
         # excess = 2
         if v % 12 in [2, 11]:
-            cover_1, xi_1 = cover_k3k4(v + 1)
+            res_1 = cover_k3k4(v + 1)
+            cover_1 = res_1.blocks
             groups = []
             groups.extend([g for g in cover_1 if len(g) == 3])
             # print(groups)
@@ -72,11 +86,30 @@ def cover_k3k4(v, cover=None, xi=None):  # generate minimum K3 and K4 cover of K
     # print(cover)
     # print(xi)
 
-    return cover, xi
+    # normalize blocks: sort vertices inside each block
+    cover = [tuple(sorted(B)) for B in cover]
+
+    # count K3 vs K4 blocks
+    n_k3 = sum(1 for B in cover if len(B) == 3)
+    n_k4 = sum(1 for B in cover if len(B) == 4)
+
+    # normalize xi edges as (min, max)
+    xi = [(min(a, b), max(a, b)) for (a, b) in xi]
+
+
+    return CoverResult(
+        v=v,
+        blocks=cover,
+        xi=xi,
+        n_k3=n_k3,
+        n_k4=n_k4,
+    )
 
 
 if __name__ == '__main__':
-    c, x = cover_k3k4(1201)
+    res = cover_k3k4(1201)
+    c=res.blocks
+    x=res.xi
 
     print(c)
     print(x)

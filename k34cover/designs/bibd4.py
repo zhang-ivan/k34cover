@@ -1,4 +1,4 @@
-from gdd45_m4 import u45
+from k34cover.designs.gdd45_m4 import u45
 
 
 # M4 = {1, 4, 5, 8, 9, 12, 13, 28, 29}

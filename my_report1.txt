@@ -1,0 +1,225 @@
+------------
+order = 11
+excess for K-11:
+[(1, 10), (1, 11)]
+number of triples: 7
+number of quadruples: 6
+check result for K-11:
+True
+
+------------
+order = 12
+excess for K-12:
+[]
+number of triples: 4
+number of quadruples: 9
+check result for K-12:
+True
+
+------------
+order = 13
+excess for K-13:
+[]
+number of triples: 0
+number of quadruples: 13
+check result for K-13:
+True
+
+------------
+order = 14
+excess for K-14:
+[(1, 13), (1, 14)]
+number of triples: 9
+number of quadruples: 11
+check result for K-14:
+True
+
+------------
+order = 15
+excess for K-15:
+[]
+number of triples: 5
+number of quadruples: 15
+check result for K-15:
+True
+
+------------
+order = 16
+excess for K-16:
+[]
+number of triples: 0
+number of quadruples: 20
+check result for K-16:
+True
+
+------------
+order = 23
+excess for K-23:
+[(1, 22), (1, 23)]
+number of triples: 15
+number of quadruples: 35
+check result for K-23:
+True
+
+------------
+order = 24
+excess for K-24:
+[]
+number of triples: 8
+number of quadruples: 42
+check result for K-24:
+True
+
+------------
+order = 25
+excess for K-25:
+[]
+number of triples: 0
+number of quadruples: 50
+check result for K-25:
+True
+
+------------
+order = 26
+excess for K-26:
+[(1, 25), (1, 26)]
+number of triples: 17
+number of quadruples: 46
+check result for K-26:
+True
+
+------------
+order = 27
+excess for K-27:
+[]
+number of triples: 9
+number of quadruples: 54
+check result for K-27:
+True
+
+------------
+order = 28
+excess for K-28:
+[]
+number of triples: 0
+number of quadruples: 63
+check result for K-28:
+True
+
+------------
+order = 35
+excess for K-35:
+[(1, 34), (1, 35)]
+number of triples: 23
+number of quadruples: 88
+check result for K-35:
+True
+
+------------
+order = 36
+excess for K-36:
+[]
+number of triples: 12
+number of quadruples: 99
+check result for K-36:
+True
+
+------------
+order = 37
+excess for K-37:
+[]
+number of triples: 0
+number of quadruples: 111
+check result for K-37:
+True
+
+------------
+order = 38
+excess for K-38:
+[(1, 37), (1, 38)]
+number of triples: 25
+number of quadruples: 105
+check result for K-38:
+True
+
+------------
+order = 39
+excess for K-39:
+[]
+number of triples: 13
+number of quadruples: 117
+check result for K-39:
+True
+
+------------
+order = 40
+excess for K-40:
+[]
+number of triples: 0
+number of quadruples: 130
+check result for K-40:
+True
+
+------------
+order = 47
+excess for K-47:
+[(1, 46), (1, 47)]
+number of triples: 31
+number of quadruples: 165
+check result for K-47:
+True
+
+------------
+order = 48
+excess for K-48:
+[]
+number of triples: 16
+number of quadruples: 180
+check result for K-48:
+True
+
+------------
+order = 49
+excess for K-49:
+[]
+number of triples: 0
+number of quadruples: 196
+check result for K-49:
+True
+
+------------
+order = 50
+excess for K-50:
+[(1, 49), (1, 50)]
+number of triples: 33
+number of quadruples: 188
+check result for K-50:
+True
+
+------------
+order = 51
+excess for K-51:
+[]
+number of triples: 17
+number of quadruples: 204
+check result for K-51:
+True
+
+------------
+order = 52
+excess for K-52:
+[]
+number of triples: 0
+number of quadruples: 221
+check result for K-52:
+True
+
+------------
+order = 59
+excess for K-59:
+[(1, 58), (1, 59)]
+number of triples: 39
+number of quadruples: 266
+check result for K-59:
+True
+

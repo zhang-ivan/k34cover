@@ -1,0 +1,15 @@
+[project]
+name = "k34cover"
+version = "0.1.0"
+description = "Minimal K3 and K4 covers of minimum excess of complete graphs of order v congruent to -1, 0, 1, 2, 3, 4 modulo 12"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "numpy",
+    "sympy",
+    "galois",
+    "primefac",
+]
+
+[project.scripts]
+k34cover = "k34cover.cli:main"

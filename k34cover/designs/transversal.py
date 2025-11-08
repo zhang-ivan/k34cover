@@ -3,7 +3,7 @@ import math
 
 from primefac import primefac
 
-from pg2 import pg2
+from k34cover.designs.pg2 import pg2
 
 
 def trans1(p, alpha, blocks=None, groups=None):
