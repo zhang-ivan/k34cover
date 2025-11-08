@@ -58,8 +58,8 @@ For each admissible v, the report lists for example:
 order = 52
 excess for K-52:
 []
-number of triples: 221
-number of quadruples: 0
+number of triples: 0
+number of quadruples: 221
 check result for K-52:
 True
 ```
