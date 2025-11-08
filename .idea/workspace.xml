@@ -5,33 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2bb63d6f-5a64-4f4e-8152-0fde0ff159d8" name="Changes" comment="Result obtained for 7&lt;=v&lt;=300 and v congruent to 0, 1, 2, 3, 4, 11 (mod 12).">
-      <change afterPath="$PROJECT_DIR$/LICENSE" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/k34cover.egg-info/PKG-INFO" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/k34cover.egg-info/SOURCES.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/k34cover.egg-info/dependency_links.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/k34cover.egg-info/entry_points.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/k34cover.egg-info/requires.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/k34cover.egg-info/top_level.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/k34cover/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/k34cover/cli.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/k34cover/designs/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/k34cover/utils/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/k34cover/verify.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/my_report.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/my_report1.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pyproject.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/cover_generator.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/cover_generator.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assign_diagonal.py" beforeDir="false" afterPath="$PROJECT_DIR$/k34cover/utils/assign_diagonal.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bibd4.py" beforeDir="false" afterPath="$PROJECT_DIR$/k34cover/designs/bibd4.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/check_cover.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/gdd45_m4.py" beforeDir="false" afterPath="$PROJECT_DIR$/k34cover/designs/gdd45_m4.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/k3k4cover.py" beforeDir="false" afterPath="$PROJECT_DIR$/k34cover/cover.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pg2.py" beforeDir="false" afterPath="$PROJECT_DIR$/k34cover/designs/pg2.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/r_picker.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/transversal.py" beforeDir="false" afterPath="$PROJECT_DIR$/k34cover/designs/transversal.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
