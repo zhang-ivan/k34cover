@@ -1,0 +1,15 @@
+{
+  "title": "k34cover: Minimal K3 and K4 covers of complete graphs with minimum excess",
+  "upload_type": "software",
+  "access_right": "open",
+  "creators": [
+    {
+      "name": "Zhang, Yifan",
+      "orcid": "0000-0002-8046-4627",
+      "affiliation": "VSB - Technical University of Ostrava"
+    }
+  ],
+  "description": "Code to construct and analyze K3/K4 covers for any complete graph of order congruent to -1, 0, 1, 2, 3, 4 modulo 12 used in computational experiments.",
+  "license": "cc-by-nc-4.0",
+  "keywords": ["covering designs", "graph decomposition", "K3", "K4", "combinatorial design"]
+}
