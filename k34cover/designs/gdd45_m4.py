@@ -1,3 +1,10 @@
+"""Mixed {4,5}-GDD construction used by the BIBD(4) recursion.
+
+The function :func:`u45` implements the recursive M4 group decomposition used
+by the original design-theoretic construction. Diagnostic verification is
+available through the private ``_verify_gdd_45_m4`` helper.
+"""
+
 from collections import Counter
 
 import k34cover.designs.transversal as transversal
@@ -154,13 +161,11 @@ def u45(u, design=None, groups=None, enforce_mod: bool = True):  # Intermediate 
     if enforce_mod:
         assert u % 4 in (0, 1), f"input {u} is not congruent to 0 or 1 (mod 4)!"
 
-    # print(f"[u45] ENTER u={u}")
 
     if u in M4:
         groups.append(tuple(range(1, u + 1)))
 
     elif u in [16, 17, 20]:
-        # print(f"[u45] small case {u} via trans1(2,2)")
         design = transversal.truncate(transversal.trans1(2, 2), u - 16)
         groups.extend([(1, 2, 3, 4), (5, 6, 7, 8), (9, 10, 11, 12), (13, 14, 15, 16)])
         if u > 16:
@@ -168,26 +173,22 @@ def u45(u, design=None, groups=None, enforce_mod: bool = True):  # Intermediate 
 
 
     elif u in [21, 24, 25]:
-        # print(f"[u45] small case {u} via trans1(5,1) + trim")
         design = transversal.truncate(transversal.trans_trim(transversal.trans1(5, 1), 5), u - 20)
         groups.extend([(1, 2, 3, 4, 5), (6, 7, 8, 9, 10), (11, 12, 13, 14, 15), (16, 17, 18, 19, 20)])
         groups.append(tuple(range(21, u + 1)))
 
     elif u in [32, 33, 36, 37, 40]:
-        # print(f"[u45] small case {u} via trans1(2,3) + trim")
         design = transversal.truncate(transversal.trans_trim(transversal.trans1(2, 3), 5), u - 32)
         groups.extend([tuple(range(1, 9)), tuple(range(9, 17)), tuple(range(17, 25)), tuple(range(25, 33))])
         if u > 32:
             groups.append(tuple(range(33, u + 1)))
 
     elif u in [41, 44, 45]:
-        # print(f"[u45] small case {u} via trans1(3,2) + trim")
         design = transversal.truncate(transversal.trans_trim(transversal.trans1(3, 2), 5), u - 36)
         groups.extend([tuple(range(1, 10)), tuple(range(10, 19)), tuple(range(19, 28)), tuple(range(28, 37))])
         groups.append(tuple(range(37, u + 1)))
 
     elif u in [48, 49]:
-        # print(f"[u45] small case {u} via explicit 6×2 structure + trim")
         gdd6_12_6 = []
         for i in range(6):
             for j in range(2):
@@ -249,10 +250,8 @@ def u45(u, design=None, groups=None, enforce_mod: bool = True):  # Intermediate 
 
     elif u>=52:
         # L,H = _window(u)
-        # print(f"[u45] u>=52 branch. window r∈[{L},{H}]")
         r = pick_r_mod01_pp4(u)
         r1 = u-4*r
-        # print(f"[u45] picked r={r} (r%4={r%4}); r1=u-4r={r1} (r∈M4? {r in M4}, r1∈M4? {r1 in M4})")
         assert 0 <= r1 <= r, f"[u45] sanity fail: r1={r1} not in [0,r] with r={r}"
 
         # TD build
@@ -271,18 +270,14 @@ def u45(u, design=None, groups=None, enforce_mod: bool = True):  # Intermediate 
         groups.extend(g_before)
 
         if r1 < r:
-            # print(f"[u45] truncating 5th column from {r} → r1={r1}")
             design = transversal.truncate(design, r1)
         # else:
-            # print(f"[u45] no truncation needed (r1==r)")
 
         # Add the (possibly empty) 5th group
         if r1 > 0:
             fifth = tuple(range(4*r+1,4*r+r1+1))
             groups.append(fifth)
-            # print(f"[u45] appended 5th group size={len(fifth)}  interval=[{4*r+1},{4*r+r1}]")
             if r1 not in M4:
-                # print(f"[u45] RECURSE into r1={r1} (not in M4)")
                 subdesign, subgroups = u45(r1)
                 left = 4*r+1
                 # shift subdesign/subgroups to the 5th group's label range
@@ -294,7 +289,6 @@ def u45(u, design=None, groups=None, enforce_mod: bool = True):  # Intermediate 
 
         # Now handle the 4 big columns if r not in M4
         if r not in M4:
-            # print(f"[u45] RECURSE into r={r} for each of 4 columns (since r∉M4)")
             subdesign, subgroups = u45(r)
 
             for i in range(0, 4):
@@ -307,22 +301,10 @@ def u45(u, design=None, groups=None, enforce_mod: bool = True):  # Intermediate 
                 old = tuple(range(left, right+1))
                 try:
                     old_index = groups.index(old)
-                except ValueError:
-                    print(f"[u45][WARN] could not find old group interval [{left},{right}] to replace!")
-                    old_index = None
-                if old_index is not None:
-                    groups[old_index:old_index+1] = shifted_subgroups
+                except ValueError as exc:
+                    raise AssertionError(
+                        f"u45 internal error: missing group interval [{left},{right}]"
+                    ) from exc
+                groups[old_index:old_index+1] = shifted_subgroups
                 design.extend(shifted_subdesign)
-                # print(f"[u45] column {i}: replaced [{left},{right}] with {len(shifted_subgroups)} groups; added {len(shifted_subdesign)} blocks.")
     return design, groups
-
-
-
-if __name__ == '__main__':
-
-
-    for u in range(0,400):
-        if u % 4 in [0, 1]:
-            print("\n=== u =", u, "===")
-            design, groups = u45(u)
-            ok, msgs = _verify_gdd_45_m4(u, design, groups)

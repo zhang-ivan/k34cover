@@ -1,15 +1,52 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "k34cover"
-version = "0.1.0"
-description = "Minimal K3 and K4 covers of minimum excess of complete graphs of order v congruent to -1, 0, 1, 2, 3, 4 modulo 12"
+version = "0.3.1"
+description = "Deterministic design-theoretic minimum-excess K3/K4 coverings of complete graphs"
 readme = "README.md"
+license = {file = "LICENSE"}
+authors = [
+    {name = "Yifan Zhang"},
+]
 requires-python = ">=3.9"
+keywords = [
+    "combinatorial design",
+    "covering design",
+    "graph decomposition",
+    "K3",
+    "K4",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: Other/Proprietary License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Mathematics",
+]
 dependencies = [
-    "numpy",
     "sympy",
+]
+
+[project.optional-dependencies]
+legacy-pg2 = [
     "galois",
-    "primefac",
 ]
 
 [project.scripts]
 k34cover = "k34cover.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/zhang-ivan/k34cover"
+Repository = "https://github.com/zhang-ivan/k34cover"
+Issues = "https://github.com/zhang-ivan/k34cover/issues"
+
+[tool.setuptools.packages.find]
+include = ["k34cover*"]

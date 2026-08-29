@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you use k34cover in academic work, please cite the software."
+title: "k34cover: deterministic minimum-excess K3/K4 coverings"
+type: software
+authors:
+  - family-names: Zhang
+    given-names: Yifan
+    orcid: "https://orcid.org/0000-0002-8046-4627"
+repository-code: "https://github.com/zhang-ivan/k34cover"
+url: "https://github.com/zhang-ivan/k34cover"
+version: 0.3.1
+date-released: 2026-08-29
+keywords:
+  - covering designs
+  - graph decomposition
+  - combinatorial design
+  - K3
+  - K4

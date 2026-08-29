@@ -1,16 +1,15 @@
+"""Constructive 2-(v,4,1) designs used by the covering generator.
+
+The module stores the finite M4 seeds required by the recursive construction
+and builds general admissible orders through the shared {4,5}-GDD machinery.
+"""
+
+from functools import lru_cache
+
 from k34cover.designs.gdd45_m4 import u45
 
 
-# M4 = {1, 4, 5, 8, 9, 12, 13, 28, 29}
-
 M4 = [0, 1, 4, 5, 8, 9, 12, 13, 28, 29]
-
-# dict_ur = {0: 0, 1: 0, 4: 0, 5: 0, 8: 0, 9: 0, 12: 0, 13: 0, 16: 4, 17: 4, 20: 4, 21: 5, 24: 5, 25: 5, 28: 0, 29: 0,
-#            32: 8, 33: 8, 36: 8, 37: 8, 40: 8, 41: 9, 44: 9, 45: 9, 48: 12, 49: 12, 52: 13, 53: 13, 56: 13, 57: 13,
-#            60: 13, 61: 13, 64: 16, 65: 16, 68: 17, 69: 17, 72: 17, 73: 17, 76: 17, 77: 17, 80: 20, 81: 20, 84: 20,
-#            85: 20, 88: 20, 89: 20, 92: 20, 93: 20, 96: 20, 97: 20, 100: 25, 101: 25}
-
-# dict_rm = {16: 4, 17: 4, 20: 4, 25: 5, 32: 8, 37: 8, 41: 9}
 
 gdd4_3_4 = [(1, 4, 9, 11), (1, 5, 8, 12), (1, 6, 7, 10), (2, 4, 7, 12), (2, 5, 9, 10), (2, 6, 8, 11), (3, 4, 8, 10),
             (3, 5, 7, 11), (3, 6, 9, 12)]
@@ -306,218 +305,85 @@ bibd4_88 = [(1, 2, 6, 18), (1, 3, 12, 16), (1, 4, 7, 8), (1, 5, 21, 86), (1, 9, 
             (79, 81, 82, 86), (85, 86, 87, 88)]
 
 
-def bibd4_m4(m, blocks=None):  # generate BIBD(3m+1,4,1) by Table 5.3
-    assert m in M4, f'input {m} not in M4!'
-    if m == 0:
-        blocks = []
-    elif m == 1:
-        blocks = bibd4_4
-    elif m == 4:
-        blocks = bibd4_13
-    elif m == 5:
-        blocks = bibd4_16
-    elif m == 8:
-        # # Uncomment the following to compute BIBD(25, 4, 1) again...
-        # field = galois.GF(25, repr="power", irreducible_poly="x^2-2x-2")
-        # z = field.primitive_element
-        # blocks_tmp = []
-        # for i in range(2):
-        #     for j in range(25):
-        #         if j == 0:
-        #             tuple_tmp = (1,
-        #                          int(z ** (2 * i)) + 1,
-        #                          int(z ** (2 * i + 8)) + 1,
-        #                          int(z ** (2 * i + 16)) + 1)
-        #             blocks_tmp.append(tuple(sorted(tuple_tmp)))
-        #         else:
-        #             tuple_tmp = (int(z ** (j - 1)) + 1,
-        #                          int(z ** (2 * i) + z ** (j - 1)) + 1,
-        #                          int(z ** (2 * i + 8) + z ** (j - 1)) + 1,
-        #                          int(z ** (2 * i + 16) + z ** (j - 1)) + 1)
-        #             blocks_tmp.append(tuple(sorted(tuple_tmp)))
-        # blocks = sorted(blocks_tmp)
-        blocks = bibd4_25
-    elif m == 9:
-        # # Uncomment the following to compute BIBD(28, 4, 1) again...
-        # group = galois.GF(3, primitive_element=2, repr="power")
-        # a = group.primitive_element
-        # field = galois.GF(9, irreducible_poly="x^2-2x-1", repr="power")
-        # z = field.primitive_element
-        # gdd4_3_9 = []
-        # for i in range(2):
-        #     for j in range(3):
-        #         if j == 0:
-        #             for k in range(9):
-        #                 if k == 0:
-        #                     tuple_tmp = (3 * int(z ** i) + int(a ** 0) + 1,
-        #                                  3 * int(z ** (i + 4)) + int(a ** 0) + 1,
-        #                                  3 * int(z ** (i + 2)) + int(a ** 1) + 1,
-        #                                  3 * int(z ** (i + 6)) + int(a ** 1) + 1)
-        #                     gdd4_3_9.append(tuple(sorted(tuple_tmp)))
-        #                 else:
-        #                     tuple_tmp = (3 * int(z ** i + z ** (k - 1)) + int(a ** 0) + 1,
-        #                                  3 * int(z ** (i + 4) + z ** (k - 1)) + int(a ** 0) + 1,
-        #                                  3 * int(z ** (i + 2) + z ** (k - 1)) + int(a ** 1) + 1,
-        #                                  3 * int(z ** (i + 6) + z ** (k - 1)) + int(a ** 1) + 1)
-        #                     gdd4_3_9.append(tuple(sorted(tuple_tmp)))
-        #         else:
-        #             for k in range(9):
-        #                 if k == 0:
-        #                     tuple_tmp = (3 * int(z ** i) + int(a ** 0 + a ** (j - 1)) + 1,
-        #                                  3 * int(z ** (i + 4)) + int(a ** 0 + a ** (j - 1)) + 1,
-        #                                  3 * int(z ** (i + 2)) + int(a ** 1 + a ** (j - 1)) + 1,
-        #                                  3 * int(z ** (i + 6)) + int(a ** 1 + a ** (j - 1)) + 1)
-        #                     gdd4_3_9.append(tuple(sorted(tuple_tmp)))
-        #                 else:
-        #                     tuple_tmp = (3 * int(z ** i + z ** (k - 1)) + int(a ** 0 + a ** (j - 1)) + 1,
-        #                                  3 * int(z ** (i + 4) + z ** (k - 1)) + int(a ** 0 + a ** (j - 1)) + 1,
-        #                                  3 * int(z ** (i + 2) + z ** (k - 1)) + int(a ** 1 + a ** (j - 1)) + 1,
-        #                                  3 * int(z ** (i + 6) + z ** (k - 1)) + int(a ** 1 + a ** (j - 1)) + 1)
-        #                     gdd4_3_9.append(tuple(sorted(tuple_tmp)))
-        # gdd4_3_9 = sorted(gdd4_3_9)
-        # blocks = gdd4_3_9
-        # blocks.extend(
-        #     [(1, 2, 3, 28), (4, 5, 6, 28), (7, 8, 9, 28), (10, 11, 12, 28), (13, 14, 15, 28), (16, 17, 18, 28),
-        #      (19, 20, 21, 28), (22, 23, 24, 28), (25, 26, 27, 28)])
-        # blocks = sorted(blocks)
-        blocks = bibd4_28
-    elif m == 12:
-        # # Uncomment the following to compute BIBD(37, 4, 1) again...
-        # group = galois.GF(37, primitive_element=2, repr="power")
-        # a = group.primitive_element
-        # blocks_tmp = []
-        # for i in range(3):
-        #     for j in range(37):
-        #         if j == 0:
-        #             tuple_tmp = (1,
-        #                          int(a ** (12 * i)) + 1,
-        #                          int(a ** (12 * i + 11)) + 1,
-        #                          int(a ** (12 * i + 14)) + 1)
-        #             blocks_tmp.append(tuple(sorted(tuple_tmp)))
-        #         else:
-        #             tuple_tmp = (int(a ** (j - 1)) + 1,
-        #                          int(a ** (12 * i) + a ** (j - 1)) + 1,
-        #                          int(a ** (12 * i + 11) + a ** (j - 1)) + 1,
-        #                          int(a ** (12 * i + 14) + a ** (j - 1)) + 1)
-        #             blocks_tmp.append(tuple(sorted(tuple_tmp)))
-        # blocks = sorted(blocks_tmp)
-        blocks = bibd4_37
-    elif m == 13:
-        # # Uncomment the following to compute BIBD(40, 4, 1) again...
-        # gdd4_3_39 = []
-        # for master_block in bibd4_13:
-        #     indices = []
-        #     for el in master_block:
-        #         indices.extend([3 * (el - 1) + 1, 3 * (el - 1) + 2, 3 * el])
-        #     for block in gdd4_3_4:
-        #         block_tmp = []
-        #         for e in block:
-        #             block_tmp.append(indices[e - 1])
-        #         gdd4_3_39.append(tuple(sorted(block_tmp)))
-        # blocks = gdd4_3_39
-        # blocks.extend([(1, 2, 3, 40), (4, 5, 6, 40), (7, 8, 9, 40), (10, 11, 12, 40), (13, 14, 15, 40),
-        #                (16, 17, 18, 40), (19, 20, 21, 40), (22, 23, 24, 40), (25, 26, 27, 40), (28, 29, 30, 40),
-        #                (31, 32, 33, 40), (34, 35, 36, 40), (37, 38, 39, 40)])
-        # blocks = sorted(blocks)
-        blocks = bibd4_40
-    elif m == 28:
-        # # Uncomment the following to compute BIBD(85, 4, 1) again...
-        # gdd4_3_84 = []
-        # # bibd4_28 = bibd4_m4(9)
-        # for master_block in bibd4_28:
-        #     indices = []
-        #     for el in master_block:
-        #         indices.extend([3 * (el - 1) + 1, 3 * (el - 1) + 2, 3 * el])
-        #     for block in gdd4_3_4:
-        #         block_tmp = []
-        #         for e in block:
-        #             block_tmp.append(indices[e - 1])
-        #         gdd4_3_84.append(tuple(sorted(block_tmp)))
-        # blocks = gdd4_3_84
-        # for i in range(28):
-        #     blocks.append((i * 3 + 1, i * 3 + 2, i * 3 + 3, 85))
-        # blocks = sorted(blocks)
-        blocks = bibd4_85
-    elif m == 29:
-        # # Uncomment the following to compute BIBD(88, 4, 1) again...
-        # # bibd5_21 = pg2.pg2(2, 2)
-        # # t5_21 = transversal.trans_trim(transversal.trans1(5, 1), 5)
-        # t4_21 = transversal.trans2(21)
-        # blocks_tmp = t4_21
-        # for i in range(4):
-        #     design_25 = []
-        #     indices_25 = list(range(21 * i + 1, 21 * (i + 1) + 1))
-        #     # Assuming the first block in the BIBD(25, 4, 1) is (1, 2, 7, 14)...
-        #     indices_25.insert(0, 85)
-        #     indices_25.insert(1, 86)
-        #     indices_25.insert(6, 87)
-        #     indices_25.insert(23, 88)
-        #     for j in range(1, len(bibd4_25)):
-        #         design_25.append(tuple(sorted(tuple(indices_25[i_ - 1] for i_ in bibd4_25[j]))))
-        #     blocks_tmp.extend(design_25)
-        # blocks_tmp.append((85, 86, 87, 88))
-        # blocks = sorted(blocks_tmp)
-        blocks = bibd4_88
 
-    # print(blocks)
-    return blocks
+_BIBD4_M4_SEEDS = {
+    0: (),
+    1: tuple(bibd4_4),
+    4: tuple(bibd4_13),
+    5: tuple(bibd4_16),
+    8: tuple(bibd4_25),
+    9: tuple(bibd4_28),
+    12: tuple(bibd4_37),
+    13: tuple(bibd4_40),
+    28: tuple(bibd4_85),
+    29: tuple(bibd4_88),
+}
 
 
+def bibd4_m4(m, blocks=None):
+    """Return the fixed BIBD(3m+1,4,1) seed for ``m`` in M4.
+
+    Earlier versions kept a long if/elif chain plus commented regeneration
+    scripts in this runtime module.  The finite certificates are immutable
+    data, so a direct table lookup is both clearer and cheaper.
+    """
+    m = int(m)
+    if m not in _BIBD4_M4_SEEDS:
+        raise AssertionError(f"input {m} not in M4!")
+    seed = _BIBD4_M4_SEEDS[m]
+    if blocks is None:
+        return list(seed)
+    out = list(blocks)
+    out.extend(seed)
+    return out
 
 
-def bibd4(v):  # generate BIBD(v,4,1) by Lem 5.11
-    assert v % 12 in [1, 4], f'input {v} is not congruent to 1 or 4 (mod 12)!'
+def _build_bibd4(v: int):
+    """Construct a BIBD(v,4,1) by the original Lemma 5.11 machinery."""
+    if v % 12 not in (1, 4):
+        raise AssertionError(f"input {v} is not congruent to 1 or 4 (mod 12)!")
     u = (v - 1) // 3
     u_design, u_groups = u45(u)
-    # print(u_groups)
     u_design = sorted(set(u_design))
     blocks = []
+
     for master_block in u_design:
         indices = []
         for el in master_block:
             indices.extend([el, el + u, el + 2 * u])
         if len(master_block) == 4:
-            for block in gdd4_3_4:
-                block_tmp = []
-                for e in block:
-                    block_tmp.append(int(indices[e - 1]))
-                blocks.append(tuple(sorted(block_tmp)))
+            local = gdd4_3_4
         elif len(master_block) == 5:
-            for block in gdd4_3_5:
-                block_tmp = []
-                for e in block:
-                    block_tmp.append(int(indices[e - 1]))
-                blocks.append(tuple(sorted(block_tmp)))
+            local = gdd4_3_5
+        else:
+            raise AssertionError(f"unexpected master block size {len(master_block)}")
+        for block in local:
+            blocks.append(tuple(sorted(int(indices[e - 1]) for e in block)))
+
     for group in u_groups:
-        m = len(group)
-        # print(m)
         indices = []
         for el in group:
             indices.extend([el, el + u, el + 2 * u])
         indices.append(v)
-        group_design = bibd4_m4(m)
-        for block in group_design:
-            block_tmp = [int(indices[t - 1]) for t in block]
-            blocks.append(tuple(sorted(block_tmp)))
+        for block in bibd4_m4(len(group)):
+            blocks.append(tuple(sorted(int(indices[t - 1]) for t in block)))
 
-    blocks = sorted(blocks)
-    # print('BIBD:')
-    # print(blocks)
-    return blocks
+    return tuple(sorted(blocks))
 
 
-if __name__ == '__main__':
-    blocks = bibd4(361)
-    print(blocks)
-    blocks = bibd4(64)
-    print(blocks)
-    d = bibd4_m4(29)
-    print(d)
-    result = bibd4(37)
-    print(result)
+@lru_cache(maxsize=8)
+def _bibd4_cached(v: int):
+    # A small LRU is enough to exploit the important reuse pattern: one source
+    # BIBD(N,4,1) supplies target orders N, N-1 and N-2 in the front end,
+    # without retaining an unbounded number of O(v^2)-sized designs.
+    return _build_bibd4(int(v))
 
-    # for u in (48, 49):
-    #     print("\n=== u =", u, "===")
-    #     design, groups = u45(u)  # this will print the diagnostics we inserted
-    #     print(design)
-    #     print(f"[driver] got b={len(design)} blocks and {len(groups)} groups")
+
+def bibd4(v):
+    """Generate BIBD(v,4,1), returning a fresh list for API compatibility."""
+    return list(_bibd4_cached(int(v)))
+
+
+__all__ = [
+    "M4", "gdd4_3_4", "gdd4_3_5", "bibd4_m4", "bibd4",
+]
