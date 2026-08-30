@@ -6,9 +6,8 @@ The public construction is organised around three theorem-level templates:
 * truncation/filling of a PBD(n,{4,7*},1) for residues 5,7,8,10 mod 12;
 * the Mills/Colbourn--Rosa--Stinson truncation for residues 6,9 mod 12.
 
-Only the genuine finite exceptions 6,8,9,10,18,19 are stored separately.
-Order 17 remains deliberately unsupported.  No exact-cover, SAT, ILP, or
-other combinatorial search is invoked at run time.
+Only the genuine finite exceptions 6,8,9,10,17,18,19 are stored separately.
+No exact-cover, SAT, ILP, or other combinatorial search is invoked at run time.
 """
 
 from __future__ import annotations
@@ -228,13 +227,14 @@ def _cover_from_mills_truncation(v: int) -> List[Block]:
     return blocks
 
 
-# These are the only implemented orders whose optimum construction is not an
-# instance of one of the three master templates above.
+# These are the only orders whose optimum construction is not an instance of
+# one of the three master templates above.
 _FIXED_EXCEPTIONS = {
     6: small.cover6,
     8: small.cover8,
     9: small.sts9,
     10: small.cover10,
+    17: small.cover17,
     18: small.cover18,
     19: small.cover19,
 }
@@ -243,17 +243,12 @@ _FIXED_EXCEPTIONS = {
 def cover_k3k4(v: int) -> CoverResult:
     """Construct an optimum minimum-excess {K3,K4}-cover of K_v.
 
-    Every order ``v >= 3`` is implemented except the explicitly unsupported
-    finite case ``v=17``.  All returned results have already passed the full
-    arithmetic/edge-multiplicity checker.
+    Every order ``v >= 3`` is implemented.  All returned results have already
+    passed the full arithmetic/edge-multiplicity checker.
     """
     v = int(v)
     if v < 3:
         raise ValueError("v must be at least 3")
-    if v == 17:
-        raise NotImplementedError(
-            "order 17 is unresolved and intentionally unsupported"
-        )
     if v in _FIXED_EXCEPTIONS:
         return _result(v, _FIXED_EXCEPTIONS[v]())
 

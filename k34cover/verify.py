@@ -27,23 +27,16 @@ def optimal_parameters(v: int) -> Tuple[int, int, int]:
 
     Here ``alpha`` and ``beta`` are the numbers of K3 and K4 blocks.  The
     formulas are the established optimum values used by the project, with the
-    exceptional small orders 6, 8, 9, 10, 18 and 19 inserted explicitly.
-
-    Order 17 is intentionally excluded because its secondary optimum is still
-    being treated as a separate finite problem.
+    exceptional small orders 6, 8, 9, 10, 17, 18 and 19 inserted explicitly.
     """
     if v < 3:
         raise ValueError("v must be at least 3")
-    if v == 17:
-        raise NotImplementedError(
-            "the optimum K3/K4 block count for order 17 is not settled in this package"
-        )
-
     special = {
         6: (3, 0, 3),
         8: (2, 4, 3),
         9: (0, 12, 0),
         10: (0, 9, 3),
+        17: (2, 12, 17),
         18: (0, 15, 18),
         19: (0, 13, 22),
     }

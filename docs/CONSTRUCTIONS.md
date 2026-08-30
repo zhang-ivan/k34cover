@@ -65,14 +65,16 @@ therefore retained as a separate master construction.
 
 ## Finite exceptions
 
-The top-level generator stores only the settled finite constructions that are
+The top-level generator stores only the finite optimum constructions that are
 not instances of the three master families:
 
 ```text
-6, 8, 9, 10, 18, 19.
+6, 8, 9, 10, 17, 18, 19.
 ```
 
-Order 17 is intentionally unsupported; see [`ORDER17.md`](ORDER17.md).
+The last case, order 17, is a 29-block certificate with 12 triangles and 17
+quadruples and excess 2. It is stored directly because the general residue-5
+route does not specialise to that order. See [`ORDER17.md`](ORDER17.md).
 
 ## Shared infrastructure
 

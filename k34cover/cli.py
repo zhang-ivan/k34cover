@@ -15,9 +15,8 @@ PathLike = Union[str, Path]
 def run(lb: int, ub: int, output_path: Optional[PathLike] = None) -> Path:
     """Generate verified covers for every order in ``range(lb, ub)``.
 
-    The intentionally unsupported order 17 is recorded as ``NOT IMPLEMENTED``
-    and does not terminate a range run. The path of the written report is
-    returned.
+    Every order in the requested range is constructed and internally verified.
+    The path of the written report is returned.
     """
     lb = int(lb)
     ub = int(ub)
@@ -39,13 +38,7 @@ def run(lb: int, ub: int, output_path: Optional[PathLike] = None) -> Path:
             stream.write("------------\n")
             stream.write(f"order = {order}\n")
 
-            try:
-                result = cover_k3k4(order)
-            except NotImplementedError as exc:
-                message = f"NOT IMPLEMENTED: {exc}"
-                print(message)
-                stream.write(message + "\n\n")
-                continue
+            result = cover_k3k4(order)
 
             stream.write(f"excess for K-{order}:\n{result.xi}\n")
             stream.write(f"number of triples: {result.n_k3}\n")

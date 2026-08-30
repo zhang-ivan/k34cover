@@ -69,8 +69,26 @@ def cover10() -> List[Block]:
 
 
 def cover17() -> List[Block]:
-    """Raise because the secondary optimum for order 17 is unresolved here."""
-    raise NotImplementedError("order 17 is unresolved and intentionally unsupported")
+    """Return the verified optimum 29-block covering of ``K_17``.
+
+    The certificate has 12 triangles and 17 quadruples.  Its excess consists
+    of the two repeated edges ``(1, 2)`` and ``(1, 3)``.  Together with the
+    29-block lower bound for order 17, this settles the final finite case.
+    """
+    quads = [
+        (1, 2, 4, 13), (1, 2, 14, 16), (1, 3, 5, 15),
+        (1, 3, 7, 11), (1, 6, 8, 9), (1, 10, 12, 17),
+        (2, 3, 9, 17), (4, 5, 8, 16), (4, 6, 11, 12),
+        (4, 7, 9, 10), (5, 6, 13, 17), (5, 7, 12, 14),
+        (6, 10, 14, 15), (7, 8, 13, 15), (8, 11, 14, 17),
+        (9, 12, 15, 16), (10, 11, 13, 16),
+    ]
+    triples = [
+        (2, 5, 10), (2, 6, 7), (2, 8, 12), (2, 11, 15),
+        (3, 4, 14), (3, 6, 16), (3, 8, 10), (3, 12, 13),
+        (4, 15, 17), (5, 9, 11), (7, 16, 17), (9, 13, 14),
+    ]
+    return _norm(quads + triples)
 
 
 def cover18() -> List[Block]:

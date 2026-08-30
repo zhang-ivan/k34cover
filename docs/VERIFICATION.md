@@ -1,24 +1,19 @@
 # Verification record
 
-This record applies to version 0.3.1. The mathematical construction code is the
-same three-family implementation introduced in version 0.3.0; version 0.3.1
-adds repository, documentation, metadata, and licensing cleanup together with
-small interface-quality improvements.
-
-Order 17 remains intentionally unsupported and is not used by any larger
-construction.
+This record applies to version 0.4.0. The three-family implementation from
+version 0.3.0 is retained, and the previously isolated order 17 is now supplied
+by a verified optimum 29-block finite certificate. The runtime generator is
+therefore complete for every order `v >= 3`.
 
 ## End-to-end generation
 
-The refactored generator has been materialised and checked over the following
+The release generator has been materialised and checked over the following
 finite ranges:
 
-- every order `3 <= v <= 250`, `v != 17`, independently rechecked with
-  `k3k4cover_checker`;
+- every order `3 <= v <= 500`, including `v = 17`, independently rechecked
+  with `k3k4cover_checker`;
 - every order in the direct BIBD master family through `v = 500`, independently
-  rechecked;
-- every order `3 <= v <= 500`, `v != 17`, generated successfully and accepted
-  by the complete internal verification performed by `cover_k3k4`.
+  rechecked.
 
 For each generated order, the checker verifies:
 
@@ -26,7 +21,11 @@ For each generated order, the checker verifies:
 2. every edge of `K_v` is covered;
 3. the excess multiplicity has the required size;
 4. the numbers of `K3` and `K4` blocks equal the established optimum
-   parameters for that supported order.
+   parameters for that order.
+
+For order 17 specifically, the installed certificate has 29 blocks: 12
+triangles and 17 quadruples. Its only repeated edges are `(1,2)` and `(1,3)`,
+so its excess is exactly 2.
 
 ## Regression suite
 
@@ -38,13 +37,14 @@ python -m unittest discover -s tests -v
 
 The permanent suite contains 12 tests covering:
 
-- all residue branches through order 100, excluding 17;
+- every order through 100, including 17;
 - the finite exceptional coverings;
+- the exact order-17 optimum profile and excess edges;
 - explicit and recursive Mills constructions;
 - non-MacNeish transversal ingredients;
 - Kirkman-system ingredients;
 - 7-hole and Mills route selectors;
-- command-line behaviour at the unsupported order 17.
+- command-line generation across order 17.
 
 ## Wide arithmetic route audit
 
@@ -59,7 +59,8 @@ quadratic-size designs:
 These checks validate the deterministic routing logic over large finite ranges.
 For orders beyond the materialised tests, the all-order claim rests on the
 implemented recursive constructions together with their arithmetic existence
-conditions.
+conditions. Order 17 is independent of those recursions and is stored as an
+explicit verified finite certificate.
 
 ## Performance note
 

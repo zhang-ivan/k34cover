@@ -8,8 +8,8 @@ authors:
     orcid: "https://orcid.org/0000-0002-8046-4627"
 repository-code: "https://github.com/zhang-ivan/k34cover"
 url: "https://github.com/zhang-ivan/k34cover"
-version: 0.3.1
-date-released: 2026-08-29
+version: 0.4.0
+date-released: 2026-08-30
 keywords:
   - covering designs
   - graph decomposition

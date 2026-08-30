@@ -5,6 +5,25 @@ All notable changes to this project are recorded here.
 The project follows semantic versioning while the public API remains in the
 0.x development series.
 
+## 0.4.0 - 2026-08-30
+
+### Complete spectrum
+
+- Added the verified optimum order-17 certificate with 12 triangles, 17
+  quadruples, 29 total blocks, and excess edges `(1,2)` and `(1,3)`.
+- Set `optimal_parameters(17)` to the exact optimum profile `(2, 12, 17)`.
+- Added order 17 to the finite-exception dispatcher, closing the final gap.
+- The public generator now supports every integer order `v >= 3`.
+
+### Documentation and testing
+
+- Rewrote the order-17 note from an open-case notice into the final certificate
+  and optimum-parameter record.
+- Updated the README, construction map, verification record, package metadata,
+  citation metadata, and Zenodo metadata to describe full-spectrum support.
+- Updated regression tests so consecutive sweeps and command-line tests include
+  order 17.
+
 ## 0.3.1 - 2026-08-29
 
 ### Repository and documentation

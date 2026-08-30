@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "k34cover"
-version = "0.3.1"
+version = "0.4.0"
 description = "Deterministic design-theoretic minimum-excess K3/K4 coverings of complete graphs"
 readme = "README.md"
 license = {file = "LICENSE"}

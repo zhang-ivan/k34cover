@@ -1,21 +1,23 @@
 # k34cover
 
-`k34cover` constructs minimum-excess coverings of the complete graph \(K_v\)
-by triangles \(K_3\) and 4-cliques \(K_4\).
+`k34cover` constructs optimum minimum-excess coverings of the complete graph
+\(K_v\) by triangles \(K_3\) and 4-cliques \(K_4\), for every integer
+`v >= 3`.
 
 The implementation is deterministic and design-theoretic. Runtime generation
 uses explicit finite designs together with recursive BIBD, GDD, PBD,
 transversal-design, Kirkman-system, and Mills constructions. It does **not**
 use ILP, SAT, dancing links, backtracking, or other combinatorial search.
 
-## Current status
+## Status
 
-Version **0.3.1** implements every order `v >= 3` except the isolated finite
-case `v = 17`, which is intentionally unsupported while its optimum block
-count is treated separately. No recursive construction depends on order 17.
+Version **0.4.0** covers the complete spectrum: every order `v >= 3` is
+implemented and verified against the established optimum parameters. The last
+finite case, `v = 17`, is supplied by an explicit optimum 29-block certificate
+with 12 triangles, 17 quadruples, and excess 2.
 
 The twelve residue classes modulo 12 are handled by three construction
-families:
+families, with a small set of finite exceptions:
 
 | `v mod 12` | construction family |
 | --- | --- |
@@ -23,9 +25,10 @@ families:
 | `5, 7, 8, 10` | filling/truncation of a `PBD(v+s,{4,7*},1)`, `s in {0,2}` |
 | `6, 9` | truncation of an optimum Mills covering by quadruples |
 
-The separately stored finite constructions are `v = 6, 8, 9, 10, 18, 19`.
-See [`docs/CONSTRUCTIONS.md`](docs/CONSTRUCTIONS.md) for the construction map
-and [`docs/ORDER17.md`](docs/ORDER17.md) for the status of order 17.
+The separately stored finite optimum coverings are
+`v = 6, 8, 9, 10, 17, 18, 19`. See
+[`docs/CONSTRUCTIONS.md`](docs/CONSTRUCTIONS.md) for the construction map and
+[`docs/ORDER17.md`](docs/ORDER17.md) for the final order-17 certificate.
 
 ## Requirements
 
@@ -67,8 +70,7 @@ python -m k34cover.cli --lb 7 --ub 60 --output report.txt
 ```
 
 If `--output` is omitted, a timestamped report is created in the current
-working directory. The unsupported order 17 is reported as `NOT IMPLEMENTED`
-and does not terminate a range run.
+working directory. Every order in the requested range is generated.
 
 ## Python API
 
@@ -76,12 +78,12 @@ and does not terminate a range run.
 from k34cover.cover import cover_k3k4
 from k34cover.verify import k3k4cover_checker
 
-result = cover_k3k4(90)
+result = cover_k3k4(17)
 
 print(result.v)
-print(result.n_k3, result.n_k4)
-print(result.xi)
-print(result.blocks[:5])
+print(result.n_k3, result.n_k4)   # 12, 17
+print(result.xi)                  # [(1, 2), (1, 3)]
+print(len(result.blocks))         # 29
 
 # Optional independent re-check.
 assert k3k4cover_checker(result.v, result.blocks)
@@ -104,10 +106,10 @@ Run the permanent regression suite with:
 python -m unittest discover -s tests -v
 ```
 
-The release verification includes:
+Release verification includes:
 
 - all 12 permanent regression tests;
-- end-to-end generation and checking for every `3 <= v <= 500`, except 17;
+- end-to-end generation and checking for every `3 <= v <= 500`, including 17;
 - an independent sweep of the complete BIBD-truncation family through `v=500`;
 - wide arithmetic route audits for the 7-hole and Mills recursive selectors.
 
@@ -119,7 +121,7 @@ Continuous integration runs the regression suite on supported Python versions.
 ```text
 k34cover/
 ├── .github/workflows/       # GitHub Actions regression tests
-├── docs/                    # construction, verification, and order-17 notes
+├── docs/                    # construction and verification notes
 ├── k34cover/
 │   ├── cover.py             # public three-family dispatcher
 │   ├── verify.py            # edge multiplicity and optimum-parameter checks
@@ -143,33 +145,26 @@ Important design modules are:
 - `designs/kirkman.py`: resolvable Steiner triple systems;
 - `designs/mills.py`: optimum quadruple coverings and Mills recursions;
 - `designs/resolvable.py`: finite resolvable `2-(v,4,1)` ingredients;
-- `designs/small.py`: fixed finite covering and PBD ingredients.
+- `designs/small.py`: fixed finite optimum coverings and PBD ingredients.
 
 ## Mathematical scope
 
-The software implements the design-theoretic construction framework used for
-the `{K3,K4}` minimum-excess covering problem. It is intended to produce
-explicit certificates rather than merely numerical optimum values. The
-construction code therefore mirrors the recursive design ingredients rather
-than replacing them by search.
+The software implements the design-theoretic construction framework for the
+`{K3,K4}` lexicographic covering problem: first minimise repeated edge
+occurrences, then minimise the number of blocks among coverings with minimum
+excess. It produces explicit certificates, not only numerical optimum values.
 
-## Citation
-
-If the software materially contributes to academic work, please cite it. The
-repository includes machine-readable metadata in [`CITATION.cff`](CITATION.cff)
-and `.zenodo.json`.
+For `v = 17`, the arithmetic 28-block candidate would have profile
+`(excess, K3, K4) = (2, 10, 18)`, but that profile is impossible. The installed
+29-block certificate has profile `(2, 12, 17)` and therefore attains the exact
+secondary optimum. See [`docs/ORDER17.md`](docs/ORDER17.md).
 
 ## License
 
-This project is distributed under the **K34Cover Non-Commercial Limited
-Modification License v1.0**, a custom source-available license.
+The software is distributed under the **K34Cover Non-Commercial Limited
+Modification License v1.0**. In brief, non-commercial use and verbatim
+redistribution are permitted, while public redistribution of modified versions
+and commercial use require prior written permission from the copyright holder.
 
-In brief, non-commercial use and redistribution of unmodified copies are
-permitted. Local modifications are permitted for private or internal
-non-commercial work, but modified versions may not be publicly redistributed
-without prior written permission from the copyright holder. Commercial use
-also requires prior written permission.
-
-The custom license is **not** an OSI-approved open-source license. See
-[`LICENSE`](LICENSE) for the complete terms; the full license text controls if
-this summary differs from it.
+This is a custom source-available license, not an OSI-approved open-source
+license. The complete terms in [`LICENSE`](LICENSE) control.

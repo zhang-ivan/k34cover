@@ -11,20 +11,17 @@ from k34cover.verify import k3k4cover_checker, optimal_parameters
 
 class SmallAndLegacyTests(unittest.TestCase):
     def test_small_and_new_finite_orders(self):
-        for v in (3, 4, 5, 6, 7, 8, 9, 10, 18, 19, 20, 22):
+        for v in (3, 4, 5, 6, 7, 8, 9, 10, 17, 18, 19, 20, 22):
             with self.subTest(v=v):
                 r = cover_k3k4(v)
                 self.assertTrue(k3k4cover_checker(v, r.blocks))
                 xi, a, b = optimal_parameters(v)
                 self.assertEqual((len(r.xi), r.n_k3, r.n_k4), (xi, a, b))
 
-    def test_all_residue_branches_through_100_except_17(self):
-        # This consecutive sweep is deliberately stronger than one example per
-        # congruence class.  Order 17 is a unsupported finite case and is not
-        # a recursive ingredient for any larger order.
+    def test_all_orders_through_100(self):
+        # This consecutive sweep exercises all residue classes together with
+        # every finite exception, including the final order-17 seed.
         for v in range(3, 101):
-            if v == 17:
-                continue
             with self.subTest(v=v):
                 r = cover_k3k4(v)
                 self.assertTrue(k3k4cover_checker(v, r.blocks))
@@ -33,13 +30,14 @@ class SmallAndLegacyTests(unittest.TestCase):
                     optimal_parameters(v),
                 )
 
-    def test_order17_is_explicitly_unsupported(self):
-        with self.assertRaises(NotImplementedError):
-            cover_k3k4(17)
-        with self.assertRaises(NotImplementedError):
-            optimal_parameters(17)
+    def test_order17_optimum_certificate(self):
+        r = cover_k3k4(17)
+        self.assertEqual(optimal_parameters(17), (2, 12, 17))
+        self.assertEqual((len(r.blocks), r.n_k3, r.n_k4), (29, 12, 17))
+        self.assertEqual(r.xi, [(1, 2), (1, 3)])
+        self.assertTrue(k3k4cover_checker(17, r.blocks))
 
-    def test_cli_continues_past_unsupported_17(self):
+    def test_cli_generates_order17(self):
         from k34cover.cli import run
         with tempfile.TemporaryDirectory() as td:
             report = Path(td) / "report.txt"
@@ -47,7 +45,9 @@ class SmallAndLegacyTests(unittest.TestCase):
                 run(16, 21, str(report))
             text = report.read_text()
             self.assertIn("order = 17", text)
-            self.assertIn("NOT IMPLEMENTED", text)
+            self.assertIn("number of triples: 12", text)
+            self.assertIn("number of quadruples: 17", text)
+            self.assertIn("check result for K-17:\nTrue", text)
             self.assertIn("order = 20", text)
             self.assertIn("check result for K-20:\nTrue", text)
 
