@@ -10,7 +10,7 @@ from k34cover.verify import k3k4cover_checker, optimal_parameters
 
 
 class SmallAndLegacyTests(unittest.TestCase):
-    def test_small_and_new_finite_orders(self):
+    def test_small_and_fixed_finite_orders(self):
         for v in (3, 4, 5, 6, 7, 8, 9, 10, 17, 18, 19, 20, 22):
             with self.subTest(v=v):
                 r = cover_k3k4(v)
@@ -19,8 +19,7 @@ class SmallAndLegacyTests(unittest.TestCase):
                 self.assertEqual((len(r.xi), r.n_k3, r.n_k4), (xi, a, b))
 
     def test_all_orders_through_100(self):
-        # This consecutive sweep exercises all residue classes together with
-        # every finite exception, including the final order-17 seed.
+        # This consecutive sweep exercises every residue class and finite seed.
         for v in range(3, 101):
             with self.subTest(v=v):
                 r = cover_k3k4(v)
@@ -30,26 +29,31 @@ class SmallAndLegacyTests(unittest.TestCase):
                     optimal_parameters(v),
                 )
 
-    def test_order17_optimum_certificate(self):
-        r = cover_k3k4(17)
-        self.assertEqual(optimal_parameters(17), (2, 12, 17))
-        self.assertEqual((len(r.blocks), r.n_k3, r.n_k4), (29, 12, 17))
-        self.assertEqual(r.xi, [(1, 2), (1, 3)])
-        self.assertTrue(k3k4cover_checker(17, r.blocks))
-
-    def test_cli_generates_order17(self):
+    def test_cli_report_contains_full_designs_and_per_order_times(self):
         from k34cover.cli import run
+
         with tempfile.TemporaryDirectory() as td:
             report = Path(td) / "report.txt"
-            with redirect_stdout(io.StringIO()):
-                run(16, 21, str(report))
-            text = report.read_text()
-            self.assertIn("order = 17", text)
-            self.assertIn("number of triples: 12", text)
-            self.assertIn("number of quadruples: 17", text)
-            self.assertIn("check result for K-17:\nTrue", text)
-            self.assertIn("order = 20", text)
-            self.assertIn("check result for K-20:\nTrue", text)
+            stdout = io.StringIO()
+            with redirect_stdout(stdout):
+                run(17, 20, str(report))
+
+            text = report.read_text(encoding="utf-8")
+            self.assertEqual(text.count("initialization time:"), 1)
+            self.assertEqual(text.count("generation time:"), 3)
+            self.assertEqual(text.count("full design:\n"), 3)
+            self.assertEqual(text.count("check result for K-"), 3)
+            for v in range(17, 20):
+                with self.subTest(v=v):
+                    r = cover_k3k4(v)
+                    self.assertIn(f"order = {v}", text)
+                    self.assertIn(f"total number of blocks: {len(r.blocks)}", text)
+                    self.assertIn(str(r.blocks[0]), text)
+                    self.assertIn(f"check result for K-{v}:\nTrue", text)
+
+            terminal = stdout.getvalue()
+            self.assertEqual(terminal.count("initialization time ="), 1)
+            self.assertEqual(terminal.count("generation time ="), 3)
 
 
 class TransversalTests(unittest.TestCase):

@@ -5,24 +5,70 @@ All notable changes to this project are recorded here.
 The project follows semantic versioning while the public API remains in the
 0.x development series.
 
+## 0.4.3 - 2026-08-30
+
+### Startup and timing
+
+- Separated one-time construction-backend initialization from per-order
+  generation timings.  The first requested order therefore no longer absorbs
+  Python import cost.
+- Reports now include a top-level initialization time followed by independent
+  construction-and-verification times for each requested order.
+
+### Runtime dependency reduction
+
+- Removed SymPy and mpmath from the active runtime and standalone executable.
+- Added compact exact deterministic helpers for primality, integer
+  factorisation, and irreducible-polynomial testing over finite prime fields.
+- Reduced the standalone `.pyz` from a dependency-bundled application to a
+  package-only executable, substantially reducing archive size and cold-start
+  overhead.
+
+## 0.4.2 - 2026-08-30
+
+### Reports and timing
+
+- Command-line reports now contain the complete generated block list for every
+  requested order.
+- Added an independent high-resolution elapsed-time measurement for each order.
+  The reported time covers construction and the built-in verification performed
+  before the design is returned.
+- Terminal progress output now reports the elapsed time for each generated
+  order separately.
+
+### Documentation and maintenance
+
+- Normalised the presentation of all explicitly stored finite optimum seeds;
+  none is documented as a separate special case.
+- Updated the user manual, construction notes, verification record, release
+  metadata, tests, and standalone-build workflow to match the report format.
+
+## 0.4.1 - 2026-08-30
+
+### Installation and distribution
+
+- Added a self-contained executable Python zip application (`.pyz`) for normal
+  command-line use without `pip`, a virtual environment, or administrator
+  privileges.
+- Rewrote installation instructions for PEP 668-managed Ubuntu/Debian Python
+  installations.
+- Made `pipx` the recommended persistent command-line installation method and
+  documented project-local virtual environments for development.
+- Added `docs/INSTALLATION.md` and a reproducible `scripts/build_zipapp.py`
+  release builder.
+- Added `python -m k34cover` support and a `--version` command-line option.
+
 ## 0.4.0 - 2026-08-30
 
 ### Complete spectrum
 
-- Added the verified optimum order-17 certificate with 12 triangles, 17
-  quadruples, 29 total blocks, and excess edges `(1,2)` and `(1,3)`.
-- Set `optimal_parameters(17)` to the exact optimum profile `(2, 12, 17)`.
-- Added order 17 to the finite-exception dispatcher, closing the final gap.
+- Completed the set of fixed finite optimum coverings required by the runtime
+  dispatcher.
+- Updated the exact finite optimum-parameter table used by the verifier.
 - The public generator now supports every integer order `v >= 3`.
-
-### Documentation and testing
-
-- Rewrote the order-17 note from an open-case notice into the final certificate
-  and optimum-parameter record.
 - Updated the README, construction map, verification record, package metadata,
-  citation metadata, and Zenodo metadata to describe full-spectrum support.
-- Updated regression tests so consecutive sweeps and command-line tests include
-  order 17.
+  citation metadata, Zenodo metadata, and regression tests for full-spectrum
+  support.
 
 ## 0.3.1 - 2026-08-29
 
@@ -47,10 +93,6 @@ The project follows semantic versioning while the public API remains in the
 
 ### Interface quality
 
-- Clarified that order 17 is unresolved rather than merely missing a known
-  optimum seed.
-- `optimal_parameters(17)` now raises `NotImplementedError` instead of exposing
-  an unproved 28-block profile as an optimum target.
 - Improved command-line validation and UTF-8 report writing.
 - Removed development-only `__main__` debug blocks and stale commented debug
   statements from active construction modules.
@@ -64,8 +106,7 @@ The project follows semantic versioning while the public API remains in the
 - Unified residues `5,7,8,10 (mod 12)` under one 7-hole PBD
   truncation/filling routine.
 - Retained the Mills truncation as the distinct route for residues `6,9`.
-- Reduced the top-level finite exception set to `6,8,9,10,18,19`.
-- Kept order 17 explicitly unsupported and independent of all recursive routes.
+- Reduced the top-level use of stored designs to a small fixed finite set.
 
 ### Performance and maintenance
 

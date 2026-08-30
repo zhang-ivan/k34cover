@@ -1,4 +1,4 @@
-import sympy
+from k34cover._number_theory import is_prime
 import galois
 
 
@@ -6,7 +6,7 @@ def pg2(p, alpha, blocks=None):  # generate PG(2, p**alpha) by Thm 2.1
     """Theorem 2.1"""
     if blocks is None:
         blocks = []
-    assert sympy.isprime(p), f'Input {p} is not prime!'
+    assert is_prime(p), f'Input {p} is not prime!'
     q = p ** alpha
     field = galois.GF(q, repr="power")
     z = field.primitive_element

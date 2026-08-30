@@ -6,7 +6,7 @@ The public construction is organised around three theorem-level templates:
 * truncation/filling of a PBD(n,{4,7*},1) for residues 5,7,8,10 mod 12;
 * the Mills/Colbourn--Rosa--Stinson truncation for residues 6,9 mod 12.
 
-Only the genuine finite exceptions 6,8,9,10,17,18,19 are stored separately.
+A small set of fixed finite optimum seeds is stored alongside these families.
 No exact-cover, SAT, ILP, or other combinatorial search is invoked at run time.
 """
 
@@ -227,9 +227,8 @@ def _cover_from_mills_truncation(v: int) -> List[Block]:
     return blocks
 
 
-# These are the only orders whose optimum construction is not an instance of
-# one of the three master templates above.
-_FIXED_EXCEPTIONS = {
+# Fixed finite optimum seeds used by the top-level dispatcher.
+_FIXED_SEEDS = {
     6: small.cover6,
     8: small.cover8,
     9: small.sts9,
@@ -240,6 +239,45 @@ _FIXED_EXCEPTIONS = {
 }
 
 
+
+def prepare_generation(orders: Iterable[int]) -> None:
+    """Pre-import the construction backends needed for ``orders``.
+
+    This function performs import-only initialisation.  The CLI calls it once
+    before starting per-order timers so Python module-loading cost is reported
+    separately rather than being attributed to whichever order happens to be
+    generated first.  No design is constructed and no construction cache is
+    populated here.
+    """
+    need_bibd = False
+    need_hole7 = False
+    need_mills = False
+    for raw in orders:
+        v = int(raw)
+        if v < 3:
+            raise ValueError("v must be at least 3")
+        if v in _FIXED_SEEDS:
+            continue
+        r = v % 12
+        if r in (0, 1, 2, 3, 4, 11):
+            need_bibd = True
+        elif r in (5, 7, 8, 10):
+            need_hole7 = True
+        elif r in (6, 9):
+            need_mills = True
+
+    # Import the narrowest requested modules explicitly.  hole7 imports its
+    # own dependencies, but keeping the calls explicit makes the timing
+    # boundary stable if those module internals are reorganised later.
+    import importlib
+
+    if need_bibd:
+        importlib.import_module("k34cover.designs.bibd4")
+    if need_hole7:
+        importlib.import_module("k34cover.designs.hole7")
+    if need_mills:
+        importlib.import_module("k34cover.designs.mills")
+
 def cover_k3k4(v: int) -> CoverResult:
     """Construct an optimum minimum-excess {K3,K4}-cover of K_v.
 
@@ -249,8 +287,8 @@ def cover_k3k4(v: int) -> CoverResult:
     v = int(v)
     if v < 3:
         raise ValueError("v must be at least 3")
-    if v in _FIXED_EXCEPTIONS:
-        return _result(v, _FIXED_EXCEPTIONS[v]())
+    if v in _FIXED_SEEDS:
+        return _result(v, _FIXED_SEEDS[v]())
 
     r = v % 12
     if r in (0, 1, 2, 3, 4, 11):

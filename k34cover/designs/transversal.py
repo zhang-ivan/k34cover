@@ -4,7 +4,9 @@ The original project constructed TD(q+1,q) by first constructing PG(2,q), using
 third-party ``galois`` and ``primefac`` packages.  For the covering code we only
 need the transversal design itself.  It has a much smaller direct finite-field
 construction, implemented here with elementary polynomial arithmetic over GF(p).
-This removes two heavy run-time dependencies while preserving the old public API.
+The small number-theory operations needed by that construction are implemented
+locally, so the active generator has no third-party runtime dependency while
+preserving the old public API.
 """
 
 from __future__ import annotations
@@ -15,7 +17,7 @@ from collections import Counter
 from functools import lru_cache
 from typing import Dict, Iterable, List, Sequence, Tuple
 
-import sympy
+from k34cover._number_theory import factorint, is_irreducible_monic, is_prime
 
 Block = Tuple[int, ...]
 
@@ -42,16 +44,14 @@ def _irreducible_modulus(p: int, degree: int) -> Tuple[int, ...]:
     """Return low-to-high coefficients of a monic irreducible degree-d polynomial."""
     if degree == 1:
         return (0, 1)
-    if not sympy.isprime(p):
+    if not is_prime(p):
         raise ValueError(f"p={p} is not prime")
-    x = sympy.symbols("x")
     # A reducible monic polynomial of degree >1 with zero constant term is
     # divisible by x, so restrict to nonzero constants.
     for c0 in range(1, p):
         for rest in itertools.product(range(p), repeat=degree - 1):
             coeffs = (c0, *rest, 1)
-            expr = sum(coeffs[i] * x**i for i in range(degree + 1))
-            if sympy.Poly(expr, x, modulus=p).is_irreducible:
+            if is_irreducible_monic(coeffs, p):
                 return tuple(int(c) for c in coeffs)
     raise RuntimeError(f"could not find irreducible polynomial over GF({p}) of degree {degree}")
 
@@ -98,7 +98,7 @@ def trans1(p: int, alpha: int, blocks=None, groups=None) -> List[Block]:
     x and y uniquely, hence every cross-group pair occurs exactly once.
     """
     del groups  # kept only for backward call compatibility
-    if not sympy.isprime(p):
+    if not is_prime(p):
         raise ValueError(f"p={p} is not prime")
     if alpha < 1:
         raise ValueError("alpha must be positive")
@@ -145,7 +145,7 @@ def prime_factor_mult(n: int) -> Dict[int, int]:
     """Prime factorization as ``{prime: exponent}``."""
     if n < 2:
         raise ValueError("n must be at least 2")
-    return {int(p): int(e) for p, e in sympy.factorint(n).items()}
+    return dict(factorint(n))
 
 
 def trans2(r: int) -> List[Block]:

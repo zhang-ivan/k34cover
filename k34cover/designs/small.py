@@ -69,12 +69,6 @@ def cover10() -> List[Block]:
 
 
 def cover17() -> List[Block]:
-    """Return the verified optimum 29-block covering of ``K_17``.
-
-    The certificate has 12 triangles and 17 quadruples.  Its excess consists
-    of the two repeated edges ``(1, 2)`` and ``(1, 3)``.  Together with the
-    29-block lower bound for order 17, this settles the final finite case.
-    """
     quads = [
         (1, 2, 4, 13), (1, 2, 14, 16), (1, 3, 5, 15),
         (1, 3, 7, 11), (1, 6, 8, 9), (1, 10, 12, 17),

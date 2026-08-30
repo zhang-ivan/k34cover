@@ -26,8 +26,8 @@ def optimal_parameters(v: int) -> Tuple[int, int, int]:
     """Return ``(xi, alpha, beta)`` for the optimum minimum-excess cover.
 
     Here ``alpha`` and ``beta`` are the numbers of K3 and K4 blocks.  The
-    formulas are the established optimum values used by the project, with the
-    exceptional small orders 6, 8, 9, 10, 17, 18 and 19 inserted explicitly.
+    formulas are the established optimum values used by the project, with
+    fixed finite optimum parameters inserted where required.
     """
     if v < 3:
         raise ValueError("v must be at least 3")

@@ -19,9 +19,14 @@ directly.
 ## Development setup
 
 ```bash
+python3 -m venv .venv
+source .venv/bin/activate
 python -m pip install -e .
 python -m unittest discover -s tests -v
 ```
+
+On PEP 668-managed systems, do not install the editable package directly into
+the operating system Python. See `docs/INSTALLATION.md`.
 
 The active package supports Python 3.9 and later.
 

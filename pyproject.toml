@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "k34cover"
-version = "0.4.0"
+version = "0.4.3"
 description = "Deterministic design-theoretic minimum-excess K3/K4 coverings of complete graphs"
 readme = "README.md"
 license = {file = "LICENSE"}
@@ -31,9 +31,7 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Topic :: Scientific/Engineering :: Mathematics",
 ]
-dependencies = [
-    "sympy",
-]
+dependencies = []
 
 [project.optional-dependencies]
 legacy-pg2 = [
